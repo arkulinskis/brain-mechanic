@@ -66,7 +66,7 @@ SEO = {
   ]
  ],
  "free": True,
- "site": "",
+ "site": "https://brain-mechanic.anvil.app",
  "updated": "2026-11-01",
  "icon": "icon-512.png",
  "colors": {
