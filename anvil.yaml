@@ -384,7 +384,7 @@ metadata:
   title: 'Brain Mechanic: the owner''s manual for your mind'
 name: Brain Mechanic
 native_deps:
-  head_html: "<script src=\"_/theme/legal-kit.js?v=6d6f007253\"></script>\n<!-- seo:start (APP_MAKER/seo: edit seo/apps/brainmechanic.json\
+  head_html: "<script src=\"_/theme/legal-kit.js?v=d7363fa019\"></script>\n<!-- seo:start (APP_MAKER/seo: edit seo/apps/brainmechanic.json\
     \ and run seo.py, not here) -->\n<meta name=\"robots\" content=\"index, follow, max-image-preview:large, max-snippet:-1,\
     \ max-video-preview:-1\">\n<meta name=\"keywords\" content=\"mental health self check, free ADHD self test, PHQ-9 depression\
     \ test online, GAD-7 anxiety test, am I a narcissist quiz, attachment style test, childhood emotional neglect, how parents\
