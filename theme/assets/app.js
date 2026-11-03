@@ -448,7 +448,7 @@
       var link = function (go, label) { return '<a href="#' + go + '" data-go="' + go + '">' + label + '</a>'; };
       return '<div class="ui-footer-in"><div class="ui-footer-brand">' + brand() + '<p class="muted small">' + esc(UI.config.tagline) + '</p></div>' +
         '<div class="ui-footer-links">' +
-        link('manual', 'Repair manual') + link('diagnose', 'Diagnose') + link('factory', 'Upbringing') + link('toolbox', 'Toolbox') + link('help', 'Find a pro') +
+        link('manual', 'Repair manual') + link('diagnose', 'Diagnose') + link('factory', 'Upbringing') + link('adhd', 'ADHD Pit Lane') + link('toolbox', 'Toolbox') + link('help', 'Find a pro') +
         link('workorder', 'Work order') + link('landing', 'About') +
         '<a href="https://prepsto.com/#f/kb84jdb" target="_blank" rel="noopener" data-prepsto-open>Submit feedback</a>' +
         '<button type="button" data-lk-open="overview">Privacy &amp; Terms</button>' +
@@ -522,6 +522,7 @@
   I.pause = '<path d="M8 5v14M16 5v14"/>';
   I.wind = '<path d="M3 8h10a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7"/>';
   I.scan = '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M4 12h16"/>';
+  I.flag = '<path d="M5 21V4"/><path d="M5 4h14v9H5"/><path d="M5 4h3.5v3H5zM12 4h3.5v3H12zM8.5 7H12v3H8.5zM15.5 7H19v3h-3.5zM5 10h3.5v3H5zM12 10h3.5v3H12z" fill="currentColor" stroke="none"/>';
   I.lamp = '<path d="M7 3h10l-2 7H9z"/><path d="M12 10v8M8 21h8"/>';
 
   BM.sysIcon = function (sys) { return UI.icon((BM.systemById[sys] || {}).icon || 'sparkle'); };
@@ -578,7 +579,7 @@
   };
   BM.toolCard = function (t, extra) {
     var cat = BM.TOOL_CATS.filter(function (x) { return x.id === t.cat; })[0];
-    return '<a class="bm-card tool" href="#toolbox/' + t.id + '" data-go="toolbox/' + t.id + '"><div class="top"><span class="sysic">' + UI.icon(t.w ? (t.w.indexOf('breath') === 0 ? 'wind' : t.w.indexOf('timer') === 0 ? 'clock' : t.w === 'sheet' ? 'clipboard' : 'wrench') : 'wrench') + '</span>' +
+    return '<a class="bm-card tool" href="#toolbox/' + t.id + '" data-go="toolbox/' + t.id + '"><div class="top"><span class="sysic">' + UI.icon(t.ic ? t.ic : t.w ?(t.w.indexOf('breath') === 0 ? 'wind' : t.w.indexOf('timer') === 0 ? 'clock' : t.w === 'sheet' ? 'clipboard' : 'wrench') : 'wrench') + '</span>' +
       '<span class="bm-code">' + esc(cat ? cat.name : '') + '</span><span class="bm-st">' + esc(t.time) + '</span></div><h3>' + esc(t.n) + '</h3><p>' + esc(t.line) + '</p>' + (extra || '') + '</a>';
   };
   BM.scanCard = function (s, extra) {
@@ -613,7 +614,9 @@
     ['tired', 'exhausted', 'fatigue', 'energy', 'drained'],
     ['procrastinate', 'procrastination', 'procrastinating', 'lazy', 'motivation', 'unmotivated', 'start'],
     ['guilt', 'guilty', 'shame', 'ashamed', 'worthless'],
-    ['boundaries', 'boundary', 'no', 'pleaser', 'pleasing']
+    ['boundaries', 'boundary', 'no', 'pleaser', 'pleasing'],
+    ['overwhelm', 'overwhelmed', 'swamped', 'frazzled', 'scattered'],
+    ['late', 'lateness', 'punctual', 'timeblind', 'hyperfocus']
   ];
   var synOf = {};
   SYN.forEach(function (g) { g.forEach(function (w) { synOf[stem(w)] = g.map(stem); }); });
@@ -758,6 +761,182 @@
   };
 })();
 
+/* ===== _bmd_adhd.html ===== */
+(function () {
+  var BM = window.BM = window.BM || {};
+
+  BM.ADHD = {
+    /* Relief row at the top: [tool id, short label, icon] */
+    relief: [
+      ['overwhelm_reset', 'Too much in my head', 'brake'],
+      ['time_visible', 'Time keeps vanishing', 'clock'],
+      ['two_minute', 'I can’t start', 'play'],
+      ['rejection_hit', 'That stung, badly', 'heart'],
+      ['body_double', 'I need company to do it', 'users'],
+      ['dopamine_menu', 'I’m bored and itchy', 'sparkle']
+    ],
+
+    /* What a diagnosis needs (DSM-5-TR) */
+    criteria: [
+      'Several symptoms of inattention and/or hyperactivity-impulsivity (adults need 5 of 9 in a group; children 6)',
+      'Several symptoms were present before age 12',
+      'They show up in two or more settings: home, work, school, friendships',
+      'They clearly get in the way of life: work, study, money, relationships, safety',
+      'Something else doesn’t explain them better (anxiety, depression, trauma, sleep apnoea, thyroid problems, substances)'
+    ],
+    presentations: [
+      ['Mostly inattentive', 'Drifting, losing things, unfinished tasks, forgetfulness. Quiet, so it’s often missed, especially in girls and women.'],
+      ['Mostly hyperactive-impulsive', 'Restless, talkative, interrupting, acting before thinking. In adults the motor often moves inside: a mind that won’t idle.'],
+      ['Combined', 'Enough of both. The most common presentation in clinics.']
+    ],
+
+    /* Know your engine: [title, label key, text] */
+    engine: [
+      ['Attention isn’t missing, it’s unsteered', 'research',
+        'People with ADHD can focus for hours on what grabs them (“hyperfocus”) and still can’t make themselves read a dull form. The problem is steering attention on demand, not having it. That’s why “but you can play games for hours” misses the point.'],
+      ['The executive dashboard', 'research',
+        'Psychologist Russell Barkley describes ADHD as a problem with self-management: working memory, holding back impulses, motivating yourself without a reward in sight, managing emotions and planning ahead. His line: ADHD is not a problem of knowing what to do, it’s a problem of doing what you know.'],
+      ['Time blindness', 'research',
+        'Barkley calls ADHD a disorder of time: there’s “now” and “not now”. Deadlines feel unreal until they’re close, tasks take longer than guessed, and the afternoon disappears. The fix isn’t trying harder to feel time, it’s making time visible: clocks, timers, alarms with labels.'],
+      ['The interest-based engine', 'concept',
+        'Psychiatrist William Dodson’s idea: an ADHD brain starts on interest, novelty, challenge and urgency, not on importance. Not a formal research model, but many people find it explains why “it matters” isn’t enough fuel, and why deadlines, games and company work.'],
+      ['Emotional floods', 'research',
+        'Feelings arrive fast and big, and take longer to settle. A 2020 meta-analysis of 13 studies found adults with ADHD had much more emotion dysregulation than other adults (Beheshti et al., BMC Psychiatry). The diagnostic manual lists irritability, low frustration tolerance and mood swings as common features.'],
+      ['Rejection sensitivity (“RSD”)', 'concept',
+        '“Rejection sensitive dysphoria” is a popular term, not a diagnosis, and research on it is still thin. But the experience is real for many: criticism or a hint of rejection hits like a punch, sometimes followed by shutting down or lashing out. It responds to the same tools as other emotional floods.'],
+      ['A body clock that runs late', 'research',
+        'Late sleep timing is very common in ADHD: reviews estimate up to three in four people. Tiredness then worsens every symptom. In small trials, bright light in the morning moved the body clock earlier in adults with ADHD. Fix sleep timing before judging anything else.'],
+      ['Hormones and women', 'research',
+        'Girls and women are diagnosed less and later, often after years of “anxiety” or “depression” labels. Early research suggests ADHD symptoms shift across the menstrual cycle and may worsen around perimenopause, but studies are few. If you notice a monthly pattern, track it and tell your prescriber.'],
+      ['It rarely travels alone', 'research',
+        'Most adults with ADHD have at least one other condition: anxiety, depression, sleep problems, autism (people say “AuDHD”), learning differences such as dyslexia, or substance use. A good assessment checks for all of them, because treating one without the other often stalls.']
+    ],
+
+    myths: [
+      ['Sugar causes ADHD.', 'Controlled trials found sugar doesn’t change children’s behaviour (Wolraich et al., JAMA, 1995). ADHD is mostly inherited: twin studies put heritability around 70–80%.'],
+      ['If I can focus on games, it can’t be ADHD.', 'Locking onto interesting things is typical of ADHD. The trouble is steering attention to what doesn’t grab you.'],
+      ['You’d have been diagnosed as a kid.', 'Many adults were missed, especially girls and the inattentive type: quiet daydreamers don’t disrupt class. Some coped until life got more complicated.'],
+      ['ADHD medication leads to addiction.', 'In a 2025 study of 148,581 people in Sweden, starting ADHD medication was linked to 15% less substance misuse and 17% fewer suicide attempts (Zhang et al., BMJ). Stimulants can be misused, so prescribers monitor them.'],
+      ['ADHD is a superpower.', 'Many people with ADHD are creative, energetic and brilliant in a crisis. But a diagnosis means it’s costing you something. Both can be true at once.'],
+      ['TikTok says I have it, so I do.', 'A study of the 100 most popular ADHD videos on TikTok found 52% were misleading (Yeung et al., Canadian Journal of Psychiatry, 2022). Feeling seen is real; diagnosis needs a professional.']
+    ],
+
+    /* What helps: [name, strength key, what it is, the evidence] */
+    evidence: [
+      ['Stimulant medication', 'strong', 'Methylphenidate, amphetamines (including lisdexamfetamine). Work within hours; dose is adjusted step by step.',
+        'With atomoxetine, the only treatments with solid evidence of reducing core adult symptoms in the largest review so far (113 trials; Ostinelli et al., Lancet Psychiatry, 2025). First-line for adults in UK (NICE NG87) and Canadian (CADDRA) guidelines. Starting medication was linked to fewer suicide attempts, accidents and crimes (Zhang et al., BMJ, 2025) and lower death rates (Li et al., JAMA, 2024).'],
+      ['Non-stimulant medication', 'good', 'Atomoxetine, viloxazine, guanfacine and others. Take weeks to work fully; not controlled drugs.',
+        'Atomoxetine reduced core symptoms in the 2025 review. Useful when stimulants don’t suit, or alongside anxiety, tics or substance concerns. They aren’t under stimulant production quotas, so their supply stayed steadier during the recent stimulant shortages.'],
+      ['CBT for adult ADHD', 'good', 'Skills-based therapy: planning, organising, procrastination, unhelpful thoughts. Usually 12–20 sessions.',
+        'Beat relaxation training in a well-known trial (Safren et al., JAMA, 2010). Helps most with daily functioning and mood; effects on core symptoms were less consistent in the 2025 review.'],
+      ['Learning about your ADHD', 'good', 'Psychoeducation: how your brain works, why strategies help, what to tell others.',
+        'Recommended by NICE and CADDRA as part of every treatment plan. Understanding replaces shame, which makes everything else easier.'],
+      ['Exercise', 'some', 'Anything that raises your heart rate.',
+        'A single bout gives a small, short boost to focus and self-control, mostly studied in children (meta-analyses 2019–2024). Regular exercise also helps mood and sleep. Try moving before a hard task.'],
+      ['Mindfulness', 'some', 'Short attention-training practices, adapted for restless minds.',
+        'A 2025 meta-analysis found it may improve core symptoms and daily functioning in adults; trials are small.'],
+      ['Morning light and sleep timing', 'some', 'Bright light soon after waking, steady wake time, wind-down hour.',
+        'In small trials, morning bright light shifted the body clock earlier in adults with ADHD. Talk to a doctor before using a light box if you have bipolar disorder or eye conditions.'],
+      ['ADHD coaching', 'some', 'Practical, goal-focused support for habits and systems.',
+        'Little rigorous research, but many people find it helpful. Coaching isn’t a regulated profession: look for ADHD-specific training, and it can’t replace assessment.'],
+      ['Omega-3 fish oil', 'weak', 'Supplements.',
+        'A small effect at best, mostly in children. Not a substitute for proven treatment.'],
+      ['Neurofeedback and brain-training games', 'none', 'Training brain waves or memory on a screen.',
+        'Effects mostly disappear when the people rating symptoms don’t know who got the real treatment (Cortese et al., meta-analyses, 2015 and 2016).'],
+      ['Elimination diets, “focus” gummies', 'none', 'Cutting foods, buying supplements sold for focus.',
+        'No good evidence for adults. NICE advises against elimination diets as a general treatment. Be wary of anything sold as a cure.']
+    ],
+    strengths: {
+      strong: ['Strong evidence', 'dx'], good: ['Good evidence', 'dx'], some: ['Some evidence', 'occ'],
+      weak: ['Weak evidence', ''], none: ['Not supported', 'urgent']
+    },
+
+    /* Daily systems: {id, n, icon, line, tips[], tools[]} */
+    systems: [
+      { id: 'work', n: 'Work & study', icon: 'clipboard', line: 'Make the environment do the remembering.',
+        tips: ['Ask for instructions in writing, and repeat back what you heard.', 'Break projects into check-ins with a real person and a date.', 'Noise-cancelling headphones, a quieter desk, or working from home on focus days.',
+          'Reasonable adjustments are usually free or cheap. US: the Job Accommodation Network (askjan.org) has ADHD ideas. UK: Access to Work can fund support. Canada: employers have a legal duty to accommodate.',
+          'You often don’t need to name a diagnosis to ask for an adjustment: describe what helps you work.'],
+        tools: ['time_visible', 'task_slicer', 'body_double', 'hyperfocus_exit'] },
+      { id: 'money', n: 'Money', icon: 'lock', line: 'Fewer decisions, more autopilot.',
+        tips: ['Automate every bill on payday.', 'A 24-hour rule for anything non-essential in your cart.', 'Delete saved cards from shopping sites and apps.', 'A separate “fun money” account, so spending isn’t a guilt spiral.',
+          'Late fees and lost things (“the ADHD tax”) are common. Budget for them and shrink them one system at a time.'],
+        tools: ['money_brakes', 'implementation'] },
+      { id: 'home', n: 'Home', icon: 'home', line: 'If you can’t see it, it doesn’t exist.',
+        tips: ['A launch pad by the door: keys, wallet, bag, meds, all in one tray.', 'Open baskets and clear boxes beat drawers and cupboards.', 'A 15-minute reset with music, timer on, instead of “cleaning the house”.',
+          'Put things where you use them, not where they “belong”.', 'Doubles of cheap things (chargers, scissors, keys) save hours of searching.'],
+        tools: ['door_list', 'two_minute', 'external_brain'] },
+      { id: 'love', n: 'Relationships', icon: 'heart', line: 'Partners, not parent and child.',
+        tips: ['Your partner isn’t your reminder app: use a shared calendar and alarms instead.', 'A weekly 20-minute check-in for logistics, so they don’t leak into every evening.', 'Name the trap: one person becomes the “parent”, the other the “child”. Both resent it.',
+          'Forgetting isn’t not caring, but it still hurts. Apologise for the impact, then fix the system.', 'Take notes in hard conversations so you don’t interrupt to hold a thought.'],
+        tools: ['rejection_hit', 'dear_man', 'anger_timeout'] },
+      { id: 'road', n: 'Driving & safety', icon: 'chassis', line: 'The riskiest place for a wandering mind.',
+        tips: ['Phone out of reach and on “Do not disturb while driving”.', 'Plan routes before you set off.', 'If you take medication, make sure it covers the hours you drive.',
+          'In a US study, men with ADHD had 38% fewer crashes and women 42% fewer in months they took medication (Chang et al., JAMA Psychiatry, 2017).'],
+        tools: ['phone_friction', 'implementation'] },
+      { id: 'body', n: 'Body & fuel', icon: 'fuel', line: 'Sleep, food and movement are part of treatment.',
+        tips: ['Eat breakfast with protein before medication kicks in; stimulants can switch off appetite until evening.', 'Set a “lunch” alarm.', 'Caffeine before noon only.',
+          'Ask for blood pressure and pulse checks before and during stimulant treatment.', 'Move before hard tasks: even 10 minutes helps.'],
+        tools: ['sleep_window', 'movement', 'med_checkin'] }
+    ],
+
+    /* Getting assessed */
+    steps: [
+      ['Screen yourself', 'Take the ASRS screener below and note real examples from home, work and childhood.'],
+      ['Gather the history', 'School reports, old report-card comments, and someone who knew you as a child (a parent, sibling, old friend).'],
+      ['See a family doctor', 'They rule out look-alikes (thyroid, anaemia, sleep apnoea, depression, medication side effects) and refer you on.'],
+      ['The specialist assessment', 'A psychiatrist, psychologist or specialist nurse: an interview of an hour or more (often the DIVA-5 or a similar structured interview), rating scales, and questions about other conditions.'],
+      ['A plan, then follow-ups', 'Medication (if you want it) is started low and adjusted over weeks. Therapy, coaching and adjustments at work can start any time.']
+    ],
+    redflags: [
+      'A diagnosis in one short video call, with a monthly subscription attached',
+      'Guaranteed medication before anyone has heard your history',
+      'Nobody asks about childhood, sleep, mood or substances',
+      'Supplements, scans or special diets sold as the cure'
+    ],
+    countries: [
+      ['United States', 'A psychiatrist, psychologist or neuropsychologist; your primary care doctor can refer you and check your insurance. CHADD’s directory lists professionals. Check that any online service includes a full assessment and follow-ups.'],
+      ['Canada', 'Your family doctor first; many diagnose and treat adult ADHD following the CADDRA guidelines. Public waits for specialists can be long, so many people see a private psychologist for the assessment. Québec: your family doctor or GMF; Regroupement PANDA lists local associations.'],
+      ['United Kingdom', 'Your GP refers you. In England, “Right to Choose” lets you ask to be referred to another NHS-contracted provider, often with a shorter wait. The 2025 NHS ADHD Taskforce found waits of years in some areas. Ask your GP about shared care if you go private.'],
+      ['Australia', 'A GP refers you to a psychiatrist (or paediatrician for children). The 2022 Australian clinical practice guideline sets the standard. Some states are letting trained GPs take on more ADHD care and prescribing.'],
+      ['France', 'Votre médecin traitant, puis un psychiatre ou un centre expert TDAH adulte. L’association HyperSupers TDAH France donne des repères et des contacts.'],
+      ['Elsewhere', 'Start with a doctor. ADHD Europe and national ADHD associations often keep lists of clinicians who assess adults.']
+    ],
+
+    /* Support crew: [name, where, what, url] */
+    orgs: [
+      ['CHADD', 'US', 'The largest US ADHD charity: guides, support groups, professional directory.', 'https://chadd.org'],
+      ['ADDA', 'US', 'The Attention Deficit Disorder Association, focused on adults: peer groups and workshops.', 'https://add.org'],
+      ['Job Accommodation Network', 'US', 'Free, confidential advice on workplace adjustments.', 'https://askjan.org'],
+      ['CADDAC', 'Canada', 'Canadian ADHD charity: adult resources, advocacy, workplace guides.', 'https://caddac.ca'],
+      ['CADDRA', 'Canada', 'The Canadian ADHD clinicians’ alliance; its guidelines are what many doctors follow.', 'https://www.caddra.ca'],
+      ['Regroupement PANDA', 'Québec', 'Associations TDAH partout au Québec : groupes, conférences, soutien.', 'https://www.associationpanda.qc.ca'],
+      ['ADHD UK', 'UK', 'Information, peer support and a clear guide to getting assessed.', 'https://adhduk.co.uk'],
+      ['ADHD Foundation', 'UK', 'The Neurodiversity Charity: training, schools and adult support.', 'https://www.adhdfoundation.org.uk'],
+      ['Access to Work', 'UK', 'Government grants for support at work, including for ADHD.', 'https://www.gov.uk/access-to-work'],
+      ['ADHD Australia', 'Australia', 'National information, support and advocacy.', 'https://www.adhdaustralia.org.au'],
+      ['HyperSupers TDAH France', 'France', 'Association nationale pour les familles et les adultes.', 'https://www.tdah-france.fr']
+    ],
+
+    /* For people who love someone with ADHD */
+    loved: [
+      'Assume care, not carelessness: forgotten things usually aren’t a message about you.',
+      'Agree on systems together (calendars, alarms, a launch pad) instead of being the reminder.',
+      'Say requests once, clearly, ideally in writing. Nagging teaches tuning out.',
+      'Praise effort and systems that work. Shame shuts the engine down.',
+      'Don’t diagnose someone in an argument. Suggest a check-up when things are calm.',
+      'Look after yourself too: CHADD and ADHD UK run groups for partners and families.'
+    ],
+
+    /* Headline facts for the side panel */
+    facts: [
+      ['How common', 'About 2.6% of adults worldwide have ADHD that continued from childhood, and 6.8% have significant symptoms as adults (Song et al., Journal of Global Health, 2021).'],
+      ['Why support matters', 'In UK health records, adults with diagnosed ADHD lived about 7 (men) to 9 (women) years less than others on average, which the authors tie largely to changeable things like smoking and unmet support needs, not ADHD itself (O’Nions et al., British Journal of Psychiatry, 2025).'],
+      ['Treatment works', 'Starting medication was linked to 17% fewer suicide attempts, 15% less substance misuse and 12% fewer transport accidents over two years (Zhang et al., BMJ, 2025).']
+    ]
+  };
+})();
+
 /* ===== _bmd_conditions.html ===== */
 (function () {
   var BM = window.BM = window.BM || {};
@@ -880,10 +1059,10 @@
       mix: ['anxiety', 'depression', 'autism', 'insomnia', 'execdys', 'bipolar'],
       pro: 'A psychiatrist, psychologist or specialist clinic takes a detailed history (often with school reports or someone who knew you as a child) and uses rating scales. Treatment usually combines medication (stimulants such as methylphenidate or amphetamines are among the most effective treatments in psychiatry; non-stimulants exist), CBT adapted for adult ADHD, coaching and practical adjustments at work or school.',
       diy: ['Make it visible: what isn’t in front of you doesn’t exist. Use one capture list, wall calendars, alarms with labels.', 'Borrow urgency: a timer, a body double, a deadline with a real person attached.', 'Shrink the start: the first two minutes are the hard part.', 'Protect sleep and exercise: both measurably sharpen attention.', 'Forgive the backlog. Shame makes the paralysis worse, not better.'],
-      tools: ['body_double', 'pomodoro', 'external_brain', 'two_minute', 'implementation', 'phone_friction'],
+      tools: ['overwhelm_reset', 'time_visible', 'body_double', 'task_slicer', 'dopamine_menu', 'external_brain', 'two_minute', 'phone_friction'],
       see: ['It is costing you jobs, grades, money or relationships', 'You drive distracted or take risky impulsive decisions', 'You also have low mood, anxiety or substance use (very common alongside ADHD)'],
       stat: 'About 2.6% of adults worldwide have ADHD that persisted from childhood, and 6.8% have significant adult symptoms (Song et al., Journal of Global Health, 2021).',
-      scan: 'adhd', kw: 'focus concentrate attention distracted hyperactive add executive forgetful late messy' },
+      scan: 'asrs', bay: 'adhd', kw:'focus concentrate attention distracted hyperactive add executive forgetful late messy' },
 
     { id: 'execdys', code: 'ST-02', n: 'Chronic procrastination & executive dysfunction', sys: 'steer', st: 'concept', aka: ['Task paralysis', 'Wall of awful'],
       line: 'Knowing exactly what to do, wanting to do it, and still not being able to start.',
@@ -2035,13 +2214,28 @@
               { q: 'How often do you have six or more drinks on one occasion?', opts: [['Never', 0], ['Less than monthly', 1], ['Monthly', 2], ['Weekly', 3], ['Daily or almost daily', 4]] }],
       bands: [{ max: 2, level: 0, label: 'Lower risk', text: 'Scores of 0–2 are below the usual cut-offs.' }, { max: 3, level: 1, label: 'Positive for women', text: 'A score of 3 is a positive screen for women (the cut-off for men is 4). Worth looking at your drinking.' }, { max: 7, level: 2, label: 'Positive screen', text: 'Scores of 4 and up are a positive screen for everyone: drinking at a level that may be harming health. Talk to a doctor about cutting down.' }, { max: 12, level: 3, label: 'High', text: 'Scores of 8 and up suggest higher risk. Talk to a doctor, and don’t stop suddenly if you drink heavily every day (withdrawal can be dangerous).' }],
       next: ['urge_surf', 'halt', 'delay_distract'] },
+    { id: 'asrs', n: 'Adult ADHD screener (ASRS v1.1)', kind: 'validated', cond: 'adhd', time: '2 min', bay: 'adhd',
+      source: 'The 6-question Adult Self-Report Scale-Version1.1 (ASRS-V1.1) Screener is a subset of the 18-question Adult ADHD Self-Report Scale-Version1.1 (Adult ASRS-V1.1) Symptom Checklist. © New York University and the President and Fellows of Harvard College. Developed with the World Health Organization Workgroup on Adult ADHD (Kessler et al., Psychological Medicine, 2005). Free to use with attribution; reproduced word for word, with the instructions adapted for a screen.',
+      intro: 'Please answer the questions below, rating yourself on each of the criteria shown. As you answer each question, choose the answer that best describes how you have felt and conducted yourself over the past 6 months.',
+      opts: [['Never', 0], ['Rarely', 1], ['Sometimes', 2], ['Often', 3], ['Very Often', 4]],
+      // Official scoring: an answer counts when it falls in the darkly shaded boxes (items 1–3 from Sometimes, 4–6 from Often).
+      shade: [2, 2, 2, 3, 3, 3],
+      items: ['How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?',
+        'How often do you have difficulty getting things in order when you have to do a task that requires organization?',
+        'How often do you have problems remembering appointments or obligations?',
+        'When you have a task that requires a lot of thought, how often do you avoid or delay getting started?',
+        'How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?',
+        'How often do you feel overly active and compelled to do things, like you were driven by a motor?'],
+      bands: [{ max: 3, level: 0, label: 'Below the screening line', text: 'Fewer than 4 answers fall in the shaded boxes. The screener doesn’t point to ADHD. If focus problems still get in your way, they’re worth raising: sleep, stress, anxiety and low mood all affect attention.' },
+        { max: 6, level: 3, label: 'Positive screen', text: 'Four or more answers fall in the shaded boxes. The screener’s authors say that means symptoms highly consistent with ADHD in adults, and further investigation is warranted. It’s a reason for a proper assessment, not a diagnosis.' }],
+      next: ['time_visible', 'overwhelm_reset', 'task_slicer'] },
 
     // ------------------------------------------------------------------------------ pattern checks (ours, not validated)
     { id: 'adhd', n: 'Focus & steering check', kind: 'pattern', cond: 'adhd', time: '3 min', opts: OFTEN,
       intro: 'Over the past 6 months, and thinking about most of your life, how often…',
       items: ['do you lose focus in conversations, reading or meetings, even when you want to pay attention?', 'do you make careless mistakes on boring or detailed work?', 'do you struggle to organise tasks, time and belongings?', 'do you avoid or delay tasks that need sustained mental effort?', 'do you lose things you need (keys, phone, papers)?', 'do you forget appointments, bills or promises?', 'do you feel restless, fidgety or driven like a motor?', 'do you interrupt, finish people’s sentences or talk over others?', 'do you act or buy on impulse and regret it?', 'do you underestimate how long things take, or run late?', 'do you hyperfocus on interesting things and lose track of time?', 'did teachers or family describe you as daydreamy, chatty, messy or “not living up to potential” as a child?'],
-      note: 'Inspired by DSM-5-TR ADHD criteria. The validated adult screener is the WHO Adult ADHD Self-Report Scale (ASRS); ask a clinician to use it.',
-      next: ['external_brain', 'pomodoro', 'body_double'] },
+      note: 'Inspired by DSM-5-TR ADHD criteria. For the validated six-question adult screener, take the ASRS v1.1 check.',
+      bay: 'adhd', next: ['external_brain', 'time_visible', 'body_double'] },
     { id: 'panic', n: 'Panic check', kind: 'pattern', cond: 'panic', time: '1 min', opts: OFTEN,
       intro: 'In the past month, how often…',
       items: ['did you have sudden surges of intense fear that peaked within minutes?', 'did your heart pound, or did you feel short of breath, dizzy or shaky during them?', 'did you fear you were dying, losing control or going crazy?', 'did you worry about having another attack?', 'did you avoid places or situations in case an attack happened?', 'did attacks come out of the blue, with no obvious trigger?'],
@@ -2174,6 +2368,7 @@
     { id: 'think', name: 'Rethink', line: 'Work with thoughts instead of obeying them.' },
     { id: 'move', name: 'Get the engine going', line: 'For low mood and stuck energy.' },
     { id: 'focus', name: 'Steering & focus', line: 'For starting, finishing and staying on track.' },
+    { id: 'adhd', name: 'ADHD pit crew', line: 'Built for brains that run on interest and urgency. More in the ADHD Pit Lane.' },
     { id: 'habits', name: 'Habits & urges', line: 'For loops you want to break.' },
     { id: 'people', name: 'People & boundaries', line: 'For relationships, families and difficult people.' },
     { id: 'self', name: 'Self-repair', line: 'For the inner critic and old wounds.' },
@@ -2303,6 +2498,49 @@
       why: 'Small amounts of friction change behaviour more reliably than willpower. Removing the phone from the room improved attention and working memory in one study (Ward et al., 2017).',
       steps: ['Turn off all notifications that aren’t from people.', 'Move social apps off the home screen, or delete them from the phone.', 'Turn on grayscale in the evening.', 'Charge the phone outside the bedroom.', 'Use screen-time limits with a password someone else knows.'] },
 
+    // --------------------------------------------------------------------------------- ADHD pit crew (widgets in _bmw_adhd.html)
+    { id: 'overwhelm_reset', n: 'Overwhelm reset', cat: 'adhd', time: '5 min', w: 'adhd:reset', ic: 'brake',
+      line: 'Too many tabs open in your head? Breathe, empty it all out, pick one thing, shrink it, start.',
+      why: 'Overwhelm is working memory overflowing. Writing everything down frees it (“cognitive offloading”, Risko & Gilbert, 2016), choosing one item removes the cost of deciding, and a tiny first step lowers the emotional cost of starting. A long exhale first calms the alarm enough to think.',
+      steps: ['Pull over: two or three long breaths out.', 'Empty the trunk: write down everything in your head, one line each.', 'Pick one. Not the most important, just one: the soonest due, the smallest, or the one that unblocks others.', 'Shrink it to a first physical action you could do in two minutes.', 'Start a 10-minute timer. Everything else is parked, not forgotten.'],
+      fields: [['one', 'The one thing'], ['first', 'First tiny action'], ['parked', 'Parked for later']] },
+    { id: 'time_visible', n: 'Make time visible', cat: 'adhd', time: 'any', w: 'adhd:time', ic: 'clock',
+      line: 'A shrinking disc you can see from across the room, plus a trainer that learns how long things really take you.',
+      why: 'Russell Barkley describes ADHD as a problem with sensing time, and recommends making time external and visible at the place where you work. Most people underestimate how long tasks take (the “planning fallacy”, Buehler et al., 1994); tracking guesses against real times gives you a personal correction factor.',
+      steps: ['Pick how long you’ll work, start the disc, and put it where you can see it.', 'Before a task, guess how long it will take, then time it for real.', 'After a few tasks, use your multiplier: if you’re usually 1.5× over, plan 30 minutes for a “20-minute” job.', 'Add buffers between appointments, and an alarm 10 minutes before you need to leave.'] },
+    { id: 'dopamine_menu', n: 'Dopamine menu', cat: 'adhd', time: '15 min to build', w: 'adhd:menu', ic: 'sparkle',
+      line: 'A menu of things that give you a lift, so boredom doesn’t default to scrolling.',
+      why: 'A popular ADHD idea (credited to coach Eric Tivers and spread by Jessica McCabe’s “How to ADHD”), not research-tested as such. It borrows from behavioural activation: planning rewarding activities ahead works better than choosing in the moment, when the easiest option (the phone) wins.',
+      steps: ['Starters: quick 5-minute lifts (a song, a walk round the block, cold water on your face).', 'Mains: bigger things that really refuel you (sport, a hobby, time with a friend).', 'Sides: add-ons that make dull tasks bearable (music, a podcast, a nice drink).', 'Desserts: fun but easy to overdo (scrolling, games). Fine with a timer.', 'Keep the menu where you’ll see it, and order from it when you’re itchy.'],
+      fields: [['starters', 'Starters'], ['mains', 'Mains'], ['sides', 'Sides'], ['desserts', 'Desserts'], ['specials', 'Specials']] },
+    { id: 'door_list', n: 'Launch pad & door card', cat: 'adhd', time: '10 min to set up', w: 'adhd:door', ic: 'home',
+      line: 'One spot by the door for everything you leave with, and a checklist you can’t miss.',
+      why: 'Barkley’s “point of performance” principle: put the reminder where the action happens, not in your head. Checklists cut omissions even for experts (surgical safety checklists reduced complications in Haynes et al., NEJM, 2009).',
+      steps: ['Choose one spot by the door: a tray, a hook, a basket.', 'Build your leaving list below and print the card.', 'Tape it to the door at eye level.', 'Things go back to the pad the moment you get home.', 'Doubles of cheap things (chargers, keys) save searches.'],
+      fields: [['items', 'My door list']] },
+    { id: 'task_slicer', n: 'Slice the task', cat: 'adhd', time: '5 min', w: 'sheet', ic: 'clipboard',
+      line: 'Turn a foggy project into slices of 15 minutes or less, with the first one ready to go.',
+      why: 'Big, vague tasks carry a big, vague dread. Concrete next actions (David Allen’s “next action” idea) and short sprints make starting cheaper, which matters most for ADHD brains that start on urgency, not importance.',
+      steps: ['Name the task, and what “done” looks like.', 'List the slices, each 15 minutes or less.', 'Make the first slice tiny and physical.', 'Decide your reward for finishing.'],
+      fields: [['task', 'The task', 'text', 'e.g. do my taxes'], ['done', 'Done looks like…', 'text', 'e.g. return submitted, confirmation saved'], ['slices', 'Slices (15 minutes or less each)', 'area', 'e.g. find last year’s login\ndownload the slips\n…'], ['first', 'First tiny slice, and when', 'text', 'e.g. 9:30 tomorrow: open the tax site'], ['reward', 'My reward when it’s done', 'text', '']] },
+    { id: 'hyperfocus_exit', n: 'Hyperfocus exit ramp', cat: 'adhd', time: '45 min', w: 'timer:45:Check-in', ic: 'clock',
+      line: 'Dive in, but set the exit ramp before you start.',
+      why: 'Hyperfocus is useful, but it eats meals, sleep and appointments, and switching away suddenly feels painful. Planning the exit in advance and leaving a “parking note” makes stopping and restarting easier (the same idea as Hemingway stopping mid-sentence).',
+      steps: ['Before you start, set an alarm for when you must stop, or use this 45-minute check-in.', 'When it rings: stand up, drink water, eat if you haven’t.', 'Write a parking note: where you are and the very next step.', 'Then decide on purpose: another round, or stop.'] },
+    { id: 'rejection_hit', n: 'When rejection hits hard', cat: 'adhd', time: '10 min', w: null, ic: 'heart',
+      line: 'A comment stung like a punch. Ride out the wave before you reply.',
+      why: 'Adults with ADHD show much more emotion dysregulation than others (Beheshti et al., 2020). Calming the body first, then separating facts from the story your brain tells, comes from DBT and CBT. “RSD” is a popular term, not a diagnosis, but these skills help whatever you call it.',
+      steps: ['Name it: “This is a rejection wave. It will peak and pass.”', 'Body first: three long breaths out, or cold water on your face.', 'Facts vs story: what exactly was said? What story am I adding?', 'Don’t reply for an hour, or until the next day for anything big.', 'Kindness: what would you say to a friend who felt this?'] },
+    { id: 'money_brakes', n: 'Money brakes', cat: 'adhd', time: '30 min to set up', w: null, ic: 'lock',
+      line: 'Autopilot for bills, speed bumps for impulse buys.',
+      why: 'Forgetting and impulsivity make money harder with ADHD. Automation removes the need to remember, and small amounts of friction change behaviour more reliably than willpower (the same principle as phone friction).',
+      steps: ['Set every bill to pay automatically just after payday.', 'Remove saved cards from shopping sites and apps.', 'Use a 24-hour rule: leave non-essentials in the cart overnight.', 'Keep a separate “fun money” account you can spend guilt-free.', 'Unsubscribe from shop emails; turn off sale notifications.'] },
+    { id: 'med_checkin', n: 'Medication check-in', cat: 'adhd', time: '2 min a day', w: 'sheet', ic: 'clipboard',
+      line: 'Track how a dose works for you, so the next appointment is about facts, not guesses.',
+      why: 'ADHD medication is adjusted step by step based on how you respond. NICE guidelines (NG87) ask prescribers to monitor effect, side effects, sleep, appetite, weight, pulse and blood pressure. Your notes make that faster and safer. Never change a dose without talking to your prescriber.',
+      steps: ['Note the medication, dose and time you took it.', 'Rate focus and mood later in the day.', 'Note appetite, sleep and any side effects.', 'Write down when it seemed to wear off.', 'Bring a week of notes to your appointment.'],
+      fields: [['med', 'Medication and dose', 'text', 'e.g. 20 mg at 8:00'], ['focus', 'Focus today (0–10)', 'range10', ''], ['mood', 'Mood today (0–10)', 'range10', ''], ['appetite', 'Appetite and meals', 'text', 'e.g. skipped lunch, hungry at 7 pm'], ['sleep', 'Sleep last night', 'text', 'e.g. asleep at 1 am'], ['side', 'Side effects noticed', 'text', 'e.g. headache, jittery'], ['wore_off', 'Seemed to wear off around', 'text', ''], ['ask', 'Questions for my prescriber', 'area', '']] },
+
     // --------------------------------------------------------------------------------- habits
     { id: 'urge_surf', n: 'Urge surfing', cat: 'habits', time: '10 min', w: 'timer:10:Ride the wave',
       line: 'Urges rise, peak and fall like waves. Ride one without acting on it.',
@@ -2387,6 +2625,460 @@
 
   BM.toolById = {};
   BM.TOOLS.forEach(function (t) { BM.toolById[t.id] = t; });
+})();
+
+/* ===== _bmw_adhd.html ===== */
+(function () {
+  var BM = window.BM = window.BM || {};
+  var W = BM.W = BM.W || {};
+  var esc = UI.esc;
+
+  /* ---------------------------------------------------------------- helpers */
+  function chime() {
+    try { var a = new (window.AudioContext || window.webkitAudioContext)(); [660, 880].forEach(function (f, i) { var o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; o.connect(g); g.connect(a.destination);
+      var t0 = a.currentTime + i * .35; g.gain.setValueAtTime(.18, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + 1.1); o.start(t0); o.stop(t0 + 1.1); }); } catch (e) {}
+  }
+  function mmss(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+  function download(name, text) {
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+    a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  /* Members save to the logbook (a journal entry under the tool's id); guests get the account pitch. */
+  function save(toolId, data, btn) {
+    if (!UI.me) { BM.askAccount('Keep this in your private logbook and find it on any device.'); return; }
+    UI.busy(btn, UI.api('journal_add', toolId, data)).then(function () { UI.toast('Saved to your logbook', 'ok'); });
+  }
+  function saveRow(toolId) {
+    return '<div class="ui-row">' + (UI.me ? '<button class="ui-btn" type="button" data-aw-save>' + UI.icon('save') + 'Save to my logbook</button>' : '<button class="ui-btn" type="button" data-aw-save>' + UI.icon('save') + 'Keep it in a logbook</button>') +
+      '<button class="ui-btn ghost" type="button" data-aw-dl>' + UI.icon('download') + 'Download as text</button></div>';
+  }
+  W.chime = chime;
+
+  /* ---------------------------------------------------------------- the shrinking disc (Time Timer style) */
+  function sector(frac) {
+    var r = 82, cx = 100, cy = 100;
+    if (frac <= 0) return '';
+    if (frac >= 0.9999) return '<circle cx="100" cy="100" r="' + r + '" fill="var(--c-brand)"/>';
+    var a = -frac * 2 * Math.PI, x = cx + r * Math.sin(a), y = cy - r * Math.cos(a);
+    return '<path d="M100 100 L100 ' + (cy - r) + ' A' + r + ' ' + r + ' 0 ' + (frac > 0.5 ? 1 : 0) + ' 0 ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' Z" fill="var(--c-brand)"/>';
+  }
+  function ticks() {
+    var out = '';
+    for (var i = 0; i < 60; i++) {
+      var a = i / 60 * 2 * Math.PI, long = i % 5 === 0, r1 = long ? 86 : 89, r2 = 94;
+      out += '<line x1="' + (100 + r1 * Math.sin(a)).toFixed(1) + '" y1="' + (100 - r1 * Math.cos(a)).toFixed(1) + '" x2="' + (100 + r2 * Math.sin(a)).toFixed(1) + '" y2="' + (100 - r2 * Math.cos(a)).toFixed(1) + '" stroke="var(--c-muted)" stroke-width="' + (long ? 2 : 1) + '"/>';
+    }
+    return out;
+  }
+  /* W.disc(el, minutes, {choices, autostart, label}) -> {set(min), start(), stop()} */
+  W.disc = function (el, minutes, o) {
+    o = o || {};
+    var total = minutes * 60, left = total, endAt = null, iv = null;
+    el.innerHTML = '<div class="aw-disc">' + (o.choices ? '<div class="aw-mins">' + o.choices.map(function (m) {
+        return '<button type="button" class="bm-chip' + (m === minutes ? ' on' : '') + '" data-min="' + m + '">' + m + ' min</button>'; }).join('') + '</div>' : '') +
+      '<svg viewBox="0 0 200 200" role="img" aria-label="Visual timer"><circle cx="100" cy="100" r="96" fill="var(--c-surface)" stroke="var(--c-line)" stroke-width="2"/>' + ticks() +
+      '<g data-sector></g><circle cx="100" cy="100" r="30" fill="var(--c-surface)" stroke="var(--c-line)"/><text data-t x="100" y="106" text-anchor="middle" font-size="17" font-weight="700" fill="var(--c-ink)"></text></svg>' +
+      '<div class="ui-row" style="justify-content:center"><button type="button" class="ui-btn primary" data-disc-go>' + UI.icon('play') + 'Start ' + esc(o.label || 'timer') + '</button>' +
+      '<button type="button" class="ui-btn ghost" data-disc-reset>' + UI.icon('refresh') + 'Reset</button></div></div>';
+    var sec = el.querySelector('[data-sector]'), txt = el.querySelector('[data-t]'), go = el.querySelector('[data-disc-go]');
+    function draw() { sec.innerHTML = sector(left / total); txt.textContent = mmss(left); }
+    function stop() { clearInterval(iv); iv = null; endAt = null; }
+    function tick() {
+      if (!el.isConnected) { stop(); return; }
+      left = Math.max(0, (endAt - Date.now()) / 1000); draw();
+      if (left <= 0) { stop(); chime(); UI.toast('Time. Stand up, stretch, and decide what’s next.', 'ok'); go.innerHTML = UI.icon('play') + 'Again'; left = total; setTimeout(draw, 1500); }
+    }
+    function start() { if (iv) return; if (left <= 0) left = total; endAt = Date.now() + left * 1000; iv = setInterval(tick, 250); go.innerHTML = UI.icon('pause') + 'Pause'; tick(); }
+    function set(m) { stop(); minutes = m; total = left = m * 60; draw(); go.innerHTML = UI.icon('play') + 'Start ' + esc(o.label || 'timer');
+      el.querySelectorAll('[data-min]').forEach(function (b) { b.classList.toggle('on', +b.getAttribute('data-min') === m); }); }
+    el.addEventListener('click', function (e) {
+      var m = e.target.closest('[data-min]');
+      if (m) { set(+m.getAttribute('data-min')); return; }
+      if (e.target.closest('[data-disc-go]')) { if (iv) { left = Math.max(0, (endAt - Date.now()) / 1000); stop(); go.innerHTML = UI.icon('play') + 'Resume'; } else start(); }
+      if (e.target.closest('[data-disc-reset]')) set(minutes);
+    });
+    draw();
+    if (o.autostart) start();
+    return { set: set, start: start, stop: stop, left: function () { return left; } };
+  };
+
+  /* ---------------------------------------------------------------- make time visible + estimate trainer */
+  W.time = function (box) {
+    box.innerHTML = '<div class="aw"><div><h3>Time you can see</h3><p class="hint">Pick a length, press start, and put it where your eyes land. The coloured part is the time you have left.</p></div>' +
+      '<div data-disc></div><hr class="aw-sep">' +
+      '<div><h3>How long does it really take?</h3><p class="hint">Guess, then time it for real. After a few tasks you’ll know your personal multiplier.</p></div>' +
+      '<div data-trainer></div><div data-mult></div><ul class="aw-log" data-log></ul>' +
+      '<div class="ui-row"><button type="button" class="ui-btn ghost sm" data-clear-log>' + UI.icon('trash') + 'Clear my log</button><span class="small muted">Kept only in this browser.</span></div></div>';
+    W.disc(box.querySelector('[data-disc]'), 25, { choices: [5, 10, 15, 25, 45, 60], label: 'timer' });
+    var tr = box.querySelector('[data-trainer]'), startAt = null, iv = null, cur = null;
+    function log() { return UI.store.get('adhd.times', []); }
+    function drawLog() {
+      var l = log();
+      box.querySelector('[data-log]').innerHTML = l.slice(0, 8).map(function (x) {
+        var r = x.a / x.g;
+        return '<li><span>' + esc(x.t || 'A task') + '</span><b>guess ' + x.g + 'm · took ' + (Math.round(x.a * 10) / 10) + 'm · ×' + r.toFixed(1) + '</b></li>';
+      }).join('');
+      var recent = l.slice(0, 10), g = 0, a = 0;
+      recent.forEach(function (x) { g += x.g; a += x.a; });
+      var m = g ? a / g : 0;
+      box.querySelector('[data-mult]').innerHTML = recent.length >= 2
+        ? '<div class="aw-mult" data-multiplier="' + m.toFixed(2) + '"><strong>×' + m.toFixed(1) + '</strong><p>' + (m > 1.15 ? 'Things take you about ' + m.toFixed(1) + ' times your guess. When you think 20 minutes, plan ' + Math.round(20 * m) + '.' : m < 0.85 ? 'You tend to overestimate. Good news: you’re faster than you think.' : 'Your guesses are close. Keep a small buffer anyway.') + ' Based on your last ' + recent.length + ' tasks.</p></div>'
+        : '<p class="small muted" style="margin:0">Time ' + (2 - recent.length) + ' more task' + (recent.length === 1 ? '' : 's') + ' to see your multiplier.</p>';
+    }
+    function idle() {
+      clearInterval(iv); startAt = null;
+      tr.innerHTML = '<form class="aw-train" data-train-form><label class="ui-field" style="margin:0"><span>Task</span><input type="text" name="t" maxlength="80" placeholder="e.g. answer emails"></label>' +
+        '<label class="ui-field" style="margin:0"><span>My guess (min)</span><input type="number" name="g" min="1" max="600" value="15" inputmode="numeric"></label>' +
+        '<button class="ui-btn primary" type="submit">' + UI.icon('play') + 'Start timing</button></form>';
+    }
+    function running() {
+      tr.innerHTML = '<div class="aw-big"><b>Timing</b><p>' + esc(cur.t || 'Your task') + ' · you guessed ' + cur.g + ' min</p></div><div class="aw-watch" data-watch>0:00</div>' +
+        '<div class="ui-row" style="justify-content:center"><button type="button" class="ui-btn primary" data-train-done>' + UI.icon('check') + 'Done</button><button type="button" class="ui-btn ghost" data-train-cancel>Cancel</button></div>';
+      iv = setInterval(function () {
+        if (!box.isConnected) { clearInterval(iv); return; }
+        var w = box.querySelector('[data-watch]'); if (w) w.textContent = mmss((Date.now() - startAt) / 1000);
+      }, 500);
+    }
+    box.addEventListener('submit', function (e) {
+      if (!e.target.matches('[data-train-form]')) return;
+      e.preventDefault();
+      var d = UI.formData(e.target), g = Math.max(1, Math.min(600, parseInt(d.g, 10) || 0));
+      cur = { t: (d.t || '').trim().slice(0, 80), g: g }; startAt = Date.now(); running();
+    });
+    box.addEventListener('click', function (e) {
+      if (e.target.closest('[data-train-done]') && startAt) {
+        var mins = Math.max(0.1, (Date.now() - startAt) / 60000);
+        var l = log(); l.unshift({ t: cur.t, g: cur.g, a: Math.round(mins * 10) / 10, d: new Date().toISOString().slice(0, 10) });
+        UI.store.set('adhd.times', l.slice(0, 50)); idle(); drawLog();
+        UI.toast(mins > cur.g * 1.15 ? 'Logged. It took longer than you guessed: that’s the data you need.' : 'Logged. Nicely estimated.', 'ok');
+      }
+      if (e.target.closest('[data-train-cancel]')) idle();
+      if (e.target.closest('[data-clear-log]')) UI.confirm({ title: 'Clear your time log?', ok: 'Clear', danger: true }).then(function (y) { if (y) { UI.store.set('adhd.times', []); drawLog(); } });
+    });
+    idle(); drawLog();
+  };
+
+  /* ---------------------------------------------------------------- overwhelm reset */
+  W.reset = function (box, tool) {
+    var NAMES = ['Pull over', 'Empty the trunk', 'Pick one', 'Shrink it', 'Go'];
+    var i = 0, lines = [], pick = null, breathing = false, bt = null;
+    box.innerHTML = '<div class="aw"><div class="aw-steps">' + NAMES.map(function () { return '<i></i>'; }).join('') + '</div>' +
+      '<div class="aw-step" data-s="0"><h3>1. Pull over</h3><p class="hint">Your head has too many tabs open. That’s a state, not a character flaw. Two slow breaths first: in through the nose, a second short sniff, then a long breath out.</p>' +
+        '<div class="aw-ball-wrap"><div class="aw-ball" data-ball></div></div><p class="aw-say" data-say></p>' +
+        '<div class="ui-row" style="justify-content:center"><button type="button" class="ui-btn primary" data-breathe>' + UI.icon('wind') + 'Breathe with me</button><button type="button" class="ui-btn ghost" data-next>Skip ' + UI.icon('arrow') + '</button></div></div>' +
+      '<div class="aw-step" data-s="1"><h3>2. Empty the trunk</h3><p class="hint">Everything in your head, one per line. Tasks, worries, “buy milk”, all of it. No order, no judging.</p>' +
+        '<textarea data-dump maxlength="4000" aria-label="Everything on my mind, one per line" placeholder="reply to Sam&#10;dentist&#10;the report&#10;laundry"></textarea>' +
+        '<div class="ui-row"><button type="button" class="ui-btn primary" data-next>Next ' + UI.icon('arrow') + '</button></div></div>' +
+      '<div class="aw-step" data-s="2"><h3>3. Pick one</h3><p class="hint">Not the most important. Just one: the one due soonest, the smallest, or the one that makes the others easier.</p><div class="aw-pick" data-picks></div>' +
+        '<div class="ui-row"><button type="button" class="ui-btn ghost" data-back>' + UI.icon('back') + 'Back</button><button type="button" class="ui-btn primary" data-next>Next ' + UI.icon('arrow') + '</button></div></div>' +
+      '<div class="aw-step" data-s="3"><h3>4. Shrink it</h3><p class="hint">What’s the very first physical action, something you could do in two minutes? “Open the laptop and type the email subject”, not “do the report”.</p>' +
+        '<div class="aw-big"><b>The one thing</b><p data-one></p></div><label class="ui-field" style="margin:0"><span>First tiny action</span><input type="text" data-first maxlength="200" placeholder="e.g. open the file and write the title"></label>' +
+        '<div class="ui-row"><button type="button" class="ui-btn ghost" data-back>' + UI.icon('back') + 'Back</button><button type="button" class="ui-btn primary" data-next>Ready ' + UI.icon('arrow') + '</button></div></div>' +
+      '<div class="aw-step" data-s="4"><h3>5. Go: ten minutes, that’s all</h3><div class="aw-big"><b>First move</b><p data-first-show></p></div><div data-go-disc></div>' +
+        '<div data-parked></div>' + saveRow(tool.id) + '<div class="ui-row"><button type="button" class="ui-btn ghost" data-restart>' + UI.icon('refresh') + 'Start over</button></div></div></div>';
+    var dump = box.querySelector('[data-dump]');
+    dump.value = UI.store.get('adhd.dump', '');
+    dump.addEventListener('input', function () { UI.store.set('adhd.dump', dump.value); });
+    function show() {
+      box.querySelectorAll('.aw-steps i').forEach(function (b, k) { b.classList.toggle('on', k <= i); });
+      box.querySelectorAll('[data-s]').forEach(function (s) { s.classList.toggle('on', +s.getAttribute('data-s') === i); });
+    }
+    function stopBreath() { breathing = false; clearTimeout(bt); var b = box.querySelector('[data-ball]'); if (b) { b.style.transitionDuration = '.6s'; b.style.transform = 'scale(1)'; } }
+    function breathe() {
+      var ball = box.querySelector('[data-ball]'), say = box.querySelector('[data-say]');
+      var seq = [['Breathe in through the nose', 2, 1.9], ['Second short sniff', 1, 2.3], ['Long, slow breath out', 6, 1]], k = 0, rounds = 0;
+      breathing = true;
+      (function step() {
+        if (!breathing || !box.isConnected) return;
+        if (k === seq.length) { k = 0; rounds++; }
+        if (rounds === 2) { breathing = false; say.textContent = 'Good. Now let’s empty the trunk.'; bt = setTimeout(function () { if (i === 0) { i = 1; show(); dump.focus(); } }, 1400); return; }
+        var s = seq[k++]; ball.style.transitionDuration = s[1] + 's'; ball.style.transform = 'scale(' + s[2] + ')'; say.textContent = s[0];
+        bt = setTimeout(step, s[1] * 1000);
+      })();
+    }
+    function parse() { return dump.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 40); }
+    function next() {
+      if (i === 0) { stopBreath(); i = 1; show(); dump.focus(); return; }
+      if (i === 1) {
+        lines = parse();
+        if (!lines.length) { UI.toast('Write at least one thing down first.', 'error'); return; }
+        if (pick != null && lines.indexOf(pick) < 0) pick = null;
+        box.querySelector('[data-picks]').innerHTML = lines.map(function (l, k) { return '<button type="button" class="bm-chip' + (l === pick ? ' on' : '') + '" data-pick="' + k + '">' + esc(l) + '</button>'; }).join('');
+        i = 2; show(); return;
+      }
+      if (i === 2) {
+        if (pick == null) { UI.toast('Tap one thing to work on.', 'error'); return; }
+        box.querySelector('[data-one]').textContent = pick; i = 3; show(); box.querySelector('[data-first]').focus(); return;
+      }
+      if (i === 3) {
+        var f = box.querySelector('[data-first]').value.trim();
+        if (!f) { UI.toast('Write one tiny first action.', 'error'); return; }
+        var parked = lines.filter(function (l) { return l !== pick; });
+        UI.store.set('adhd.parked', parked);
+        box.querySelector('[data-first-show]').textContent = f;
+        box.querySelector('[data-parked]').innerHTML = parked.length ? '<div><h4 style="margin:0 0 6px">Parked, not forgotten (' + parked.length + ')</h4><ul class="aw-parked">' + parked.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul></div>' : '';
+        i = 4; show();
+        W.disc(box.querySelector('[data-go-disc]'), 10, { label: '10 minutes' });
+      }
+    }
+    function text() {
+      return 'Overwhelm reset (' + new Date().toLocaleDateString() + ')\n\nThe one thing: ' + (pick || '') + '\nFirst tiny action: ' + box.querySelector('[data-first]').value.trim() +
+        '\n\nParked for later:\n' + lines.filter(function (l) { return l !== pick; }).map(function (l) { return '- ' + l; }).join('\n') + '\n';
+    }
+    box.addEventListener('click', function (e) {
+      if (e.target.closest('[data-breathe]')) { if (!breathing) breathe(); return; }
+      if (e.target.closest('[data-next]')) { next(); return; }
+      if (e.target.closest('[data-back]')) { i = Math.max(1, i - 1); show(); return; }
+      var p = e.target.closest('[data-pick]');
+      if (p) { pick = lines[+p.getAttribute('data-pick')]; box.querySelectorAll('[data-pick]').forEach(function (b) { b.classList.toggle('on', b === p); }); return; }
+      if (e.target.closest('[data-restart]')) { stopBreath(); i = 0; pick = null; show(); window.scrollTo(0, box.getBoundingClientRect().top + window.scrollY - 120); return; }
+      if (e.target.closest('[data-aw-dl]')) { download('overwhelm-reset.txt', text()); return; }
+      var sv = e.target.closest('[data-aw-save]');
+      if (sv) save(tool.id, { one: pick || '', first: box.querySelector('[data-first]').value.trim(), parked: lines.filter(function (l) { return l !== pick; }).join('\n') }, sv);
+    });
+    box.querySelector('[data-first]').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); next(); } });
+    show();
+  };
+
+  /* ---------------------------------------------------------------- dopamine menu */
+  var COURSES = [
+    ['starters', 'Starters', 'quick lifts, 5 minutes or less', ['One favourite song, loud', 'Walk around the block', 'Cold water on my face', '20 jumping jacks', 'Step outside into daylight', 'Make a nice drink', 'Text a friend something silly', 'Stretch for 3 minutes']],
+    ['mains', 'Mains', 'bigger things that really refuel you', ['A workout or sport', 'Cook something new', 'An hour on a hobby', 'Coffee with a friend', 'A walk in nature', 'Play an instrument', 'Build or fix something', 'A class: dance, climbing, art']],
+    ['sides', 'Sides', 'add-ons that make boring tasks bearable', ['A playlist for chores', 'A podcast while cleaning', 'Body doubling on video', 'Work from a café', 'A fidget toy', 'Brown noise', 'A standing desk', 'A nice pen and paper']],
+    ['desserts', 'Desserts', 'fun but easy to overdo: set a timer', ['Social media (timer on)', 'A video game (timer on)', 'YouTube rabbit holes', 'One TV episode, then stop', 'Window shopping (cart only)']],
+    ['specials', 'Specials', 'once in a while', ['A concert or a match', 'A day trip', 'Somewhere I’ve never been', 'A weekend learning something new']]
+  ];
+  W.menu = function (box, tool) {
+    var menu = UI.store.get('adhd.menu', {});
+    COURSES.forEach(function (c) { if (!Array.isArray(menu[c[0]])) menu[c[0]] = []; });
+    function persist() { UI.store.set('adhd.menu', menu); }
+    function draw() {
+      box.innerHTML = '<div class="aw"><div><h3>My dopamine menu</h3><p class="hint">Tap ideas to add them, or write your own. When you’re bored or itchy, order from here instead of reaching for the phone.</p></div>' +
+        '<div class="ui-row"><button type="button" class="ui-btn primary" data-order>' + UI.icon('sparkle') + 'Pick me a starter</button></div><div data-order-out></div>' +
+        COURSES.map(function (c) {
+          var mine = menu[c[0]], ideas = c[3].filter(function (x) { return mine.indexOf(x) < 0; });
+          return '<section class="aw-course" data-course="' + c[0] + '"><h4>' + esc(c[1]) + ' <span>' + esc(c[2]) + '</span></h4>' +
+            '<div class="aw-mine">' + (mine.length ? mine.map(function (x, k) { return '<button type="button" class="bm-chip" data-del="' + c[0] + ':' + k + '" aria-label="Remove ' + esc(x) + '">' + esc(x) + ' ' + UI.icon('x') + '</button>'; }).join('') : '<span class="small muted">Nothing yet.</span>') + '</div>' +
+            (ideas.length ? '<div class="aw-ideas">' + ideas.map(function (x) { return '<button type="button" class="bm-chip" data-idea="' + c[0] + '" data-v="' + esc(x) + '">' + UI.icon('plus') + esc(x) + '</button>'; }).join('') + '</div>' : '') +
+            '<form class="aw-add" data-add="' + c[0] + '"><input type="text" maxlength="80" placeholder="My own ' + esc(c[1].toLowerCase().replace(/s$/, '')) + '…" aria-label="Add your own ' + esc(c[1].toLowerCase()) + '"><button class="ui-btn sm" type="submit">' + UI.icon('plus') + 'Add</button></form></section>';
+        }).join('') + saveRow(tool.id) + '<p class="small muted" style="margin:0">Your menu is kept in this browser.</p></div>';
+    }
+    function add(course, v) {
+      v = String(v || '').trim().slice(0, 80);
+      if (!v || menu[course].indexOf(v) >= 0 || menu[course].length >= 20) return;
+      menu[course].push(v); persist(); draw();
+    }
+    function text() {
+      return 'My dopamine menu\n\n' + COURSES.map(function (c) { return c[1] + ' (' + c[2] + '):\n' + (menu[c[0]].length ? menu[c[0]].map(function (x) { return '- ' + x; }).join('\n') : '-') + '\n'; }).join('\n');
+    }
+    box.addEventListener('click', function (e) {
+      var idea = e.target.closest('[data-idea]');
+      if (idea) { add(idea.getAttribute('data-idea'), idea.getAttribute('data-v')); return; }
+      var del = e.target.closest('[data-del]');
+      if (del) { var p = del.getAttribute('data-del').split(':'); menu[p[0]].splice(+p[1], 1); persist(); draw(); return; }
+      if (e.target.closest('[data-order]')) {
+        var pool = menu.starters.length ? menu.starters : COURSES[0][3];
+        var pickOne = pool[Math.floor(Math.random() * pool.length)];
+        box.querySelector('[data-order-out]').innerHTML = '<div class="aw-order" data-ordered>' + esc(pickOne) + '</div>';
+        return;
+      }
+      if (e.target.closest('[data-aw-dl]')) { download('dopamine-menu.txt', text()); return; }
+      var sv = e.target.closest('[data-aw-save]');
+      if (sv) { var data = {}; COURSES.forEach(function (c) { if (menu[c[0]].length) data[c[0]] = menu[c[0]].join('\n'); });
+        if (!Object.keys(data).length) { UI.toast('Add something to your menu first.', 'error'); return; }
+        save(tool.id, data, sv); }
+    });
+    box.addEventListener('submit', function (e) {
+      var f = e.target.closest('[data-add]');
+      if (!f) return;
+      e.preventDefault(); add(f.getAttribute('data-add'), f.querySelector('input').value);
+      var again = box.querySelector('[data-add="' + f.getAttribute('data-add') + '"] input'); if (again) again.focus();
+    });
+    draw();
+  };
+
+  /* ---------------------------------------------------------------- launch pad door card */
+  var DOOR = ['Keys', 'Phone', 'Wallet or cards', 'Medication taken', 'Bag or laptop', 'Charger', 'Water bottle', 'Lunch', 'Headphones', 'Glasses'];
+  W.door = function (box, tool) {
+    var items = UI.store.get('adhd.door', null) || DOOR.slice(0, 6), ticked = {};
+    function persist() { UI.store.set('adhd.door', items); }
+    function draw() {
+      var spare = DOOR.filter(function (x) { return items.indexOf(x) < 0; });
+      var all = items.length && items.every(function (x) { return ticked[x]; });
+      box.innerHTML = '<div class="aw"><div><h3>Before I leave</h3><p class="hint">Tick through it at the door. Untick happens by itself next time you open this page.</p></div>' +
+        (all ? '<div class="aw-ready" data-ready>' + UI.icon('check') + ' Ready to roll</div>' : '') +
+        '<div class="aw-door">' + items.map(function (x, k) {
+          return '<label class="' + (ticked[x] ? 'ticked' : '') + '"><input type="checkbox" data-tick="' + k + '"' + (ticked[x] ? ' checked' : '') + '>' + esc(x) +
+            '<button type="button" class="ui-btn sm ghost icon x" data-rm="' + k + '" aria-label="Remove ' + esc(x) + '">' + UI.icon('x') + '</button></label>';
+        }).join('') + '</div>' +
+        (spare.length ? '<div class="aw-ideas">' + spare.map(function (x) { return '<button type="button" class="bm-chip" data-add-item="' + esc(x) + '">' + UI.icon('plus') + esc(x) + '</button>'; }).join('') + '</div>' : '') +
+        '<form class="aw-add" data-door-add><input type="text" maxlength="60" placeholder="Add my own, e.g. bus pass" aria-label="Add an item"><button class="ui-btn sm" type="submit">' + UI.icon('plus') + 'Add</button></form>' +
+        '<div class="ui-row"><button type="button" class="ui-btn primary" data-door-print>' + UI.icon('print') + 'Print the door card</button></div>' + saveRow(tool.id) + '</div>';
+    }
+    function add(v) { v = String(v || '').trim().slice(0, 60); if (v && items.indexOf(v) < 0 && items.length < 20) { items.push(v); persist(); draw(); } }
+    function printCard() {
+      var w = window.open('', '_blank');
+      if (!w) { UI.toast('Your browser blocked the print window. Allow pop-ups, or use Download.', 'error'); return; }
+      var html = '<!doctype html><html><head><meta charset="utf-8"><title>Door card</title></head><body style="font-family:Georgia,serif;margin:40px;color:#2a1c15">' +
+        '<h1 style="font-size:40px;margin:0 0 6px">Before I leave</h1><p style="font-size:16px;color:#6b5a4d;margin:0 0 24px">Brain Mechanic launch pad</p>' +
+        items.map(function (x) { return '<div style="font-size:30px;margin:14px 0;display:flex;gap:18px;align-items:center"><span style="width:30px;height:30px;border:3px solid #2a1c15;border-radius:6px;display:inline-block"></span>' + esc(x) + '</div>'; }).join('') +
+        '</body></html>';
+      w.document.open(); w.document.write(html); w.document.close();
+      setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 300);
+    }
+    box.addEventListener('change', function (e) {
+      var t = e.target.closest('[data-tick]');
+      if (t) { ticked[items[+t.getAttribute('data-tick')]] = t.checked; draw(); }
+    });
+    box.addEventListener('click', function (e) {
+      var rm = e.target.closest('[data-rm]');
+      if (rm) { e.preventDefault(); items.splice(+rm.getAttribute('data-rm'), 1); persist(); draw(); return; }
+      var ad = e.target.closest('[data-add-item]');
+      if (ad) { add(ad.getAttribute('data-add-item')); return; }
+      if (e.target.closest('[data-door-print]')) { printCard(); return; }
+      if (e.target.closest('[data-aw-dl]')) { download('door-card.txt', 'Before I leave\n\n' + items.map(function (x) { return '[ ] ' + x; }).join('\n') + '\n'); return; }
+      var sv = e.target.closest('[data-aw-save]');
+      if (sv) save(tool.id, { items: items.join('\n') }, sv);
+    });
+    box.addEventListener('submit', function (e) {
+      if (!e.target.matches('[data-door-add]')) return;
+      e.preventDefault(); add(e.target.querySelector('input').value);
+      var again = box.querySelector('[data-door-add] input'); if (again) again.focus();
+    });
+    draw();
+  };
+})();
+
+/* ===== adhd.html ===== */
+(function () {
+  var esc = UI.esc;
+  var JUMP = [['relief', 'Relief now'], ['check', 'Is it ADHD?'], ['engine', 'How it works'], ['myths', 'Myths'], ['helps', 'What helps'],
+    ['systems', 'Daily systems'], ['assess', 'Get assessed'], ['support', 'Support'], ['loved', 'For loved ones']];
+  var RELIEF_SUB = {
+    overwhelm_reset: 'Breathe, brain-dump, pick one',
+    time_visible: 'A timer you can see, plus your time multiplier',
+    two_minute: 'Two minutes, then you may stop',
+    rejection_hit: 'Ride the wave before you reply',
+    body_double: 'Work alongside someone',
+    dopamine_menu: 'Order a lift instead of scrolling'
+  };
+
+  function badge(kind) {
+    return kind === 'concept' ? BM.statusBadge('concept') : '<span class="bm-st dx">Backed by research</span>';
+  }
+
+  function hero() {
+    return '<section class="pl-hero"><div><div class="eyebrow">The ADHD Pit Lane</div><h1>A race-car engine with bicycle brakes</h1>' +
+      '<cite>That’s how psychiatrist Edward Hallowell, who has ADHD himself, likes to describe it.</cite>' +
+      '<p>This bay is for tuning that engine: relief when your head is too full, tools built for how an ADHD brain really works, and straight facts about what helps, with sources.</p>' +
+      '<div class="ui-row" style="margin-top:14px"><a class="ui-btn primary" href="#scan/asrs" data-go="scan/asrs">' + UI.icon('scan') + 'Take the ADHD screener</a>' +
+      '<a class="ui-btn brass" href="#toolbox/overwhelm_reset" data-go="toolbox/overwhelm_reset">' + UI.icon('brake') + 'I’m overwhelmed</a></div></div>' +
+      '<div class="pl-board" aria-hidden="true"><div><span>PIT</span><span class="w">LANE</span></div><div><span class="g">BOX</span><span class="g">BOX</span></div>' +
+      '<div><span class="w">FUEL</span><span>INTEREST</span></div><div><span class="w">TIME</span><span class="r">NOW?</span></div><div><span class="w">TYRES</span><span class="g">SLEEP</span></div></div></section>';
+  }
+
+  function relief() {
+    var parked = UI.store.get('adhd.parked', []);
+    return '<section class="pl-sec" id="pl-relief"><h2>' + UI.icon('brake') + 'Relief, right now</h2><p class="lead">Pick what fits this moment. Each one opens a tool you can use straight away, no account needed.</p>' +
+      '<div class="pl-relief">' + BM.ADHD.relief.map(function (r) {
+        var t = BM.toolById[r[0]]; if (!t) return '';
+        return '<a href="#toolbox/' + t.id + '" data-go="toolbox/' + t.id + '" data-relief="' + t.id + '">' + UI.icon(r[2]) + '<span>' + esc(r[1]) + '<small>' + esc(RELIEF_SUB[t.id] || t.line) + '</small></span></a>';
+      }).join('') + '</div>' +
+      (parked.length ? '<div class="bm-note pl-parked">' + UI.icon('save') + '<p>You parked <b>' + parked.length + ' thing' + (parked.length === 1 ? '' : 's') + '</b> in your last overwhelm reset: ' +
+        esc(parked.slice(0, 3).join(', ')) + (parked.length > 3 ? '…' : '') + '. <a href="#toolbox/overwhelm_reset" data-go="toolbox/overwhelm_reset">Pick the next one</a>.</p></div>' : '') +
+      '</section>';
+  }
+
+  function checkCard(s, kind, text) {
+    return '<a class="bm-card scan" href="#scan/' + s.id + '" data-go="scan/' + s.id + '"><div class="top"><span class="sysic">' + UI.icon('scan') + '</span>' + kind +
+      '<span class="bm-st">' + esc(s.time) + '</span></div><h3>' + esc(s.n) + '</h3><p>' + esc(text) + '</p><div class="foot">Start the check ' + UI.icon('arrow') + '</div></a>';
+  }
+  function check() {
+    var A = BM.ADHD, asrs = BM.scanById.asrs, pat = BM.scanById.adhd;
+    var last = BM.local.results().filter(function (r) { return r.scan_id === 'asrs'; })[0];
+    return '<section class="pl-sec" id="pl-check"><h2>' + UI.icon('scan') + 'Is it ADHD?</h2><p class="lead">Only a professional can say. These two checks help you decide whether to ask, and give you something concrete to bring.</p>' +
+      '<div class="pl-two">' + checkCard(asrs, '<span class="bm-st dx">Published screener</span>', 'The six-question adult screener developed with the World Health Organization, word for word, with its official scoring.') +
+        checkCard(pat, '<span class="bm-st">Pattern check</span>', 'Our longer plain-language check: twelve signs, including childhood. Not validated, but good for reflection.') + '</div>' +
+      (last ? '<div class="pl-last">' + UI.icon('clock') + 'Your last screener on this device: <span class="bm-level l' + last.level + '">' + esc(last.label) + '</span> ' + last.score + '/' + last.max + ' · ' + esc(UI.fmtDate(last.taken)) + '</div>' : '') +
+      '<div class="pl-crit"><div class="ui-card"><h3 style="font-size:1.05rem">What a diagnosis needs (DSM-5-TR)</h3><ul class="bm-list">' + A.criteria.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="pl-pres">' + A.presentations.map(function (p) { return '<div><b>' + esc(p[0]) + '</b>' + esc(p[1]) + '</div>'; }).join('') + '</div></div></section>';
+  }
+
+  function engine() {
+    return '<section class="pl-sec" id="pl-engine"><h2>' + UI.icon('engine') + 'How the engine works</h2><p class="lead">Knowing why things go wrong turns “what’s wrong with me?” into “what does this engine need?”. Labels show which ideas are research-backed and which are popular concepts.</p>' +
+      '<div class="pl-engine">' + BM.ADHD.engine.map(function (e) {
+        return '<div class="ui-card">' + badge(e[1]) + '<h3>' + esc(e[0]) + '</h3><p>' + esc(e[2]) + '</p></div>';
+      }).join('') + '</div></section>';
+  }
+
+  function myths() {
+    return '<section class="pl-sec" id="pl-myths"><h2>' + UI.icon('bulb') + 'Garage myths</h2><p class="lead">What people say in the waiting room, and what the research says.</p><div class="pl-myths">' +
+      BM.ADHD.myths.map(function (m) { return '<div class="bm-myth"><div class="m"><b>Myth</b><p>' + esc(m[0]) + '</p></div><div class="t"><b>What’s true</b><p>' + esc(m[1]) + '</p></div></div>'; }).join('') + '</div></section>';
+  }
+
+  function helps() {
+    var S = BM.ADHD.strengths;
+    return '<section class="pl-sec" id="pl-helps"><h2>' + UI.icon('wrench') + 'What helps, and how sure we are</h2>' +
+      '<p class="lead">The evidence garage. Medication decisions belong with a prescriber who knows your health; this is so you can ask good questions. Most people do best with a mix: treatment, understanding, and systems that fit.</p>' +
+      '<table class="pl-ev"><thead><tr><th>Option</th><th>Evidence</th><th>What the research says</th></tr></thead><tbody>' +
+      BM.ADHD.evidence.map(function (e) {
+        var s = S[e[1]];
+        return '<tr data-ev="' + e[1] + '"><td>' + esc(e[0]) + '<small>' + esc(e[2]) + '</small></td><td><span class="bm-st ' + s[1] + '">' + esc(s[0]) + '</span></td><td>' + esc(e[3]) + '</td></tr>';
+      }).join('') + '</tbody></table>' +
+      '<div class="pl-facts">' + BM.ADHD.facts.map(function (f) { return '<div class="ui-card bm-stat"><b>' + esc(f[0]) + '</b>' + esc(f[1]) + '</div>'; }).join('') + '</div></section>';
+  }
+
+  function systems() {
+    return '<section class="pl-sec" id="pl-systems"><h2>' + UI.icon('sliders') + 'Daily systems</h2><p class="lead">ADHD strategies work best built into your surroundings, not stored in your memory. Pick one area, try two ideas for a week.</p>' +
+      '<div class="pl-sys">' + BM.ADHD.systems.map(function (s) {
+        var tools = BM.existing(s.tools, BM.toolById);
+        return '<div class="ui-card" data-system="' + s.id + '"><h3>' + UI.icon(s.icon) + esc(s.n) + '</h3><p class="line">' + esc(s.line) + '</p><ul class="bm-list good">' +
+          s.tips.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
+          (tools.length ? '<div class="bm-links">' + tools.map(function (t) { return '<a class="bm-chip" href="#toolbox/' + t.id + '" data-go="toolbox/' + t.id + '">' + UI.icon('wrench') + esc(t.n) + '</a>'; }).join('') + '</div>' : '') + '</div>';
+      }).join('') + '</div>' +
+      '<div class="bm-note" style="margin-top:14px">' + UI.icon('heart') + '<p><b>Diagnosed later in life?</b> Relief and grief often arrive together: relief that there’s a reason, grief for the years of “lazy” and “careless”. Both are normal. Many people find it helps to rewrite their story with the new facts, alone or with a therapist.</p></div></section>';
+  }
+
+  function assess() {
+    var A = BM.ADHD;
+    return '<section class="pl-sec" id="pl-assess"><h2>' + UI.icon('clipboard') + 'Getting assessed</h2><p class="lead">What a proper adult assessment looks like, how to prepare, and where to start in your country.</p>' +
+      '<div class="pl-two"><div class="ui-card"><h3 style="font-size:1.05rem">The route</h3><ol class="bm-steps">' + A.steps.map(function (s) { return '<li><b>' + esc(s[0]) + '.</b> ' + esc(s[1]) + '</li>'; }).join('') + '</ol>' +
+        '<div class="ui-row" style="margin-top:14px"><a class="ui-btn brass" href="#workorder" data-go="workorder">' + UI.icon('clipboard') + 'Build my work order</a></div></div>' +
+        '<div class="ui-card"><h3 style="font-size:1.05rem">Red flags in an ADHD service</h3><ul class="bm-list bad">' + A.redflags.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' +
+        '<p class="small muted" style="margin:12px 0 0">Online care can be excellent. What matters is a full history, a look at other conditions, and real follow-up.</p></div></div>' +
+      '<div class="pl-countries">' + A.countries.map(function (c) { return '<div class="ui-card"><h3 style="font-size:1.05rem">' + esc(c[0]) + '</h3><p class="muted small" style="margin:6px 0 0">' + esc(c[1]) + '</p></div>'; }).join('') + '</div></section>';
+  }
+
+  function support() {
+    return '<section class="pl-sec" id="pl-support"><h2>' + UI.icon('users') + 'Your support crew</h2><p class="lead">Charities and services run by people who know ADHD. Peer groups are often where the best practical tips come from.</p>' +
+      '<div class="pl-orgs">' + BM.ADHD.orgs.map(function (o) {
+        return '<a href="' + esc(o[3]) + '" target="_blank" rel="noopener"><em>' + esc(o[1]) + '</em><b>' + esc(o[0]) + UI.icon('external') + '</b><span>' + esc(o[2]) + '</span></a>';
+      }).join('') + '</div></section>';
+  }
+
+  function loved() {
+    return '<section class="pl-sec" id="pl-loved"><h2>' + UI.icon('heart') + 'For people who love someone with ADHD</h2><p class="lead">Partners, parents, friends and colleagues: how to help without becoming the reminder app.</p>' +
+      '<div class="ui-card"><ul class="bm-list good">' + BM.ADHD.loved.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul></div></section>';
+  }
+
+  UI.page('adhd', { title: 'ADHD Pit Lane', nav: 'ADHD', icon: 'flag', order: 35 }, function (view, ctx) {
+    view.innerHTML = '<div class="ui-wrap">' + hero() +
+      '<div class="pl-jump"><div class="bm-chips">' + JUMP.map(function (j) { return '<button type="button" class="bm-chip" data-jump="' + j[0] + '">' + esc(j[1]) + '</button>'; }).join('') + '</div></div>' +
+      relief() + check() + engine() + myths() + helps() + systems() + assess() + support() + loved() +
+      '<div class="bm-see" style="margin-bottom:18px"><h3>' + UI.icon('brake') + 'When it’s more than focus</h3><p style="margin:0 0 10px">ADHD comes with a higher risk of depression, accidents and suicidal thoughts, especially untreated. If you’re struggling, please talk to someone today.</p>' +
+        '<div class="ui-row"><button class="bm-brake" data-brake>' + UI.icon('brake') + 'Open the emergency brake</button>' + BM.planButton('condition', 'adhd') + '</div></div>' +
+      BM.note() + '</div>';
+    view.addEventListener('click', function (e) {
+      var j = e.target.closest('[data-jump]');
+      if (!j) return;
+      var id = j.getAttribute('data-jump'), sec = view.querySelector('#pl-' + id);
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try { history.replaceState(null, '', '#adhd/' + id); } catch (e2) {}
+    });
+    var target = ctx.args[0] && view.querySelector('#pl-' + ctx.args[0]);
+    if (target) setTimeout(function () { target.scrollIntoView({ block: 'start' }); }, 60);
+    return Promise.resolve();
+  });
 })();
 
 /* ===== admin.html ===== */
@@ -2872,7 +3564,9 @@
         });
       } else if ((t = e.target.closest('[data-wipe]'))) {
         UI.confirm({ title: 'Delete your whole logbook?', text: 'Every reading, saved check, plan item and worksheet will be gone for good. Results kept in this browser are cleared too. Your account stays.', ok: 'Delete everything', danger: true }).then(function (y) {
-          if (y) UI.api('clear_logbook').then(function (r) { BM.local.clear(); UI.toast(r.deleted + ' entries deleted', 'ok'); return load(); });
+          if (y) UI.api('clear_logbook').then(function (r) { BM.local.clear();
+            ['adhd.dump', 'adhd.parked', 'adhd.times', 'adhd.menu', 'adhd.door'].forEach(function (k) { try { localStorage.removeItem(UI.config.key + '.' + k); } catch (e2) {} });
+            UI.toast(r.deleted + ' entries deleted', 'ok'); return load(); });
         });
       }
     });
@@ -3077,6 +3771,11 @@
         '<div class="ui-row"><a class="ui-btn primary" href="#scan/factory" data-go="scan/factory">Run the Factory Settings check</a><a class="ui-btn" href="#factory" data-go="factory">Browse patterns</a></div></div>' +
         '<div class="bm-cards">' + samplePatterns.map(function (p) { return BM.patternCard(p); }).join('') + '</div></div></div></section>' +
 
+      '<section class="lp-section" id="pit"><div class="ui-wrap"><div class="lp-pit"><div><div class="eyebrow">The ADHD Pit Lane</div><h2>A race-car engine with bicycle brakes?</h2>' +
+        '<p class="muted">A whole bay for ADHD: relief when your head is too full, the six-question adult screener, a timer that makes time visible, and an honest look at what helps, from medication to coaching, with the evidence for each.</p>' +
+        '<div class="ui-row"><a class="ui-btn primary" href="#adhd" data-go="adhd">' + UI.icon('flag') + 'Enter the Pit Lane</a><a class="ui-btn" href="#scan/asrs" data-go="scan/asrs">Take the screener</a></div></div>' +
+        '<div class="bm-cards">' + BM.existing(['overwhelm_reset', 'time_visible', 'dopamine_menu'], BM.toolById).map(function (t) { return BM.toolCard(t); }).join('') + '</div></div></div></section>' +
+
       '<section class="lp-section"><div class="ui-wrap"><div class="lp-head"><h2>The fine print, in big letters</h2></div><div class="lp-fine">' +
         '<div class="ui-card"><h3>' + UI.icon('info') + 'Not a doctor</h3><p class="muted">Nobody here is a doctor, psychologist or therapist. This is for fun and self-reflection. It is not medical advice, a diagnosis or treatment.</p></div>' +
         '<div class="ui-card"><h3>' + UI.icon('book') + 'Honest about evidence</h3><p class="muted">Every entry says whether it’s a recognised diagnosis or a popular idea, names its sources, and separates published screeners from our own checks.</p></div>' +
@@ -3192,6 +3891,7 @@
       '<span class="mn-where">' + UI.icon(s.icon) + esc(s.name) + '</span></div>' +
       '<h1>' + esc(c.n) + '</h1><p class="line">' + esc(c.line) + '</p>' +
       (c.aka && c.aka.length ? '<p class="small muted" style="margin-top:8px">Also called: ' + c.aka.map(esc).join(' · ') + '</p>' : '') + '</div>' +
+      (c.bay === 'adhd' ? '<a class="mn-bay" href="#adhd" data-go="adhd" data-bay>' + UI.icon('flag') + '<span><b>Open the ADHD Pit Lane</b>Relief tools, the ASRS screener, what really helps, daily systems and how to get assessed.</span>' + UI.icon('arrow') + '</a>' : '') +
       (urgent ? '<div class="bm-see" style="margin-bottom:20px"><h3>' + UI.icon('brake') + 'If this is you right now</h3><p style="margin:0 0 10px">Please talk to someone today. You don’t have to explain it well.</p><button class="bm-brake" data-brake>' + UI.icon('brake') + 'Open the emergency brake</button></div>' : '') +
       '<div class="bm-art"><div>' +
         '<section class="bm-sec"><h2>' + UI.icon('brake') + 'Warning lights</h2><ul class="bm-list warn">' + c.signs.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></section>' +
@@ -3290,6 +3990,10 @@
     var items = itemsOf(scan);
     var max = items.reduce(function (s, it) { return s + it.opts[it.opts.length - 1][1]; }, 0);
     var score = ans.reduce(function (s, v) { return s + (v || 0); }, 0);
+    if (scan.shade) {  // ASRS: count the answers that land in the shaded boxes
+      score = ans.filter(function (v, i) { return v != null && v >= scan.shade[i]; }).length;
+      max = items.length;
+    }
     var r = { scan_id: scan.id, score: score, max: max, taken: new Date().toISOString(), detail: null };
     if (scan.gate && gate === false) { r.score = 0; score = 0; r.detail = { gate: false }; }
     if (scan.kind === 'pattern') {
@@ -3356,6 +4060,8 @@
       '<a class="ui-btn" href="#workorder" data-go="workorder">' + UI.icon('clipboard') + 'Work order for a pro</a>' +
       '<button class="ui-btn ghost" data-again>' + UI.icon('refresh') + 'Retake</button></div></div></div>' +
       r.flags.map(flagHtml).join('') + extra +
+      (scan.bay === 'adhd' ? '<div class="sc-block"><div class="sc-bay" data-bay><div><h3>The ADHD Pit Lane</h3><p>Relief tools, what really helps (and what doesn’t), daily systems and how to get assessed, all in one bay.</p></div>' +
+        '<a class="ui-btn primary" href="#adhd" data-go="adhd">' + UI.icon('steer') + 'Open the Pit Lane</a></div></div>' : '') +
       (c ? '<div class="sc-block"><h2>What this lights up in the manual</h2><div class="bm-cards">' + BM.condCard(c) + '</div></div>' : '') +
       (tools.length ? '<div class="sc-block"><h2>Tools to try first</h2><div class="bm-cards">' + tools.map(function (t) { return BM.toolCard(t); }).join('') + '</div></div>' : '') +
       '<div class="sc-block">' + BM.note() + '</div>';
@@ -3377,8 +4083,11 @@
         '<div data-items' + (scan.gate ? ' hidden' : '') + '><p class="sc-intro">' + esc(scan.intro) + '</p>' +
         items.map(function (it, i) {
           return '<fieldset class="sc-q" data-i="' + i + '"><legend><span class="n">' + String(i + 1).padStart(2, '0') + '</span>' + esc(it.q) + '</legend><div class="sc-opts">' +
-            it.opts.map(function (o) { return '<label class="sc-opt"><input type="radio" name="q' + i + '" value="' + o[1] + '"><span>' + esc(o[0]) + '</span></label>'; }).join('') + '</div></fieldset>';
-        }).join('') + '</div>' +
+            it.opts.map(function (o) {
+              var sh = scan.shade && o[1] >= scan.shade[i];
+              return '<label class="sc-opt' + (sh ? ' shade' : '') + '"><input type="radio" name="q' + i + '" value="' + o[1] + '"><span>' + esc(o[0]) + '</span></label>';
+            }).join('') + '</div></fieldset>';
+        }).join('') + (scan.shade ? '<p class="small muted sc-shade-note"><span class="sc-swatch"></span>Shaded answers are the ones the screener counts. Four or more is a positive screen.</p>' : '') + '</div>' +
         '<label class="ui-check sc-ack"><input type="checkbox" name="ack" data-ack><span>I understand this is a self-check for fun and reflection, <b>not a diagnosis or medical advice</b>.</span></label>' +
         '<div class="ui-row"><button class="ui-btn primary lg" type="submit">' + UI.icon('scan') + 'Run the scan</button><span class="small muted" data-hint></span></div>' +
         (scan.source || scan.note ? '<p class="sc-src">' + esc(scan.source || '') + (scan.source && scan.note ? ' ' : '') + esc(scan.note || '') + '</p>' : '') +
@@ -3578,7 +4287,7 @@
     var cat = BM.TOOL_CATS.filter(function (c) { return c.id === t.cat; })[0];
     var conds = BM.CONDITIONS.filter(function (c) { return c.tools.indexOf(t.id) >= 0; });
     var pats = BM.PATTERNS.filter(function (p) { return p.tools.indexOf(t.id) >= 0; });
-    view.innerHTML = '<div class="ui-wrap"><a class="bm-back" href="#toolbox" data-go="toolbox">' + UI.icon('back') + 'Toolbox</a>' +
+    view.innerHTML = '<div class="ui-wrap"><a class="bm-back" href="' + (t.cat === 'adhd' ? '#adhd" data-go="adhd">' + UI.icon('back') + 'ADHD Pit Lane' : '#toolbox" data-go="toolbox">' + UI.icon('back') + 'Toolbox') + '</a>' +
       '<div class="bm-art-head"><div class="ui-row"><span class="bm-code">' + esc(cat.name) + '</span><span class="bm-st">' + esc(t.time) + '</span></div><h1>' + esc(t.n) + '</h1><p class="line">' + esc(t.line) + '</p></div>' +
       '<div class="bm-art"><div>' + (t.w && t.w !== 'garage' ? '<div class="tb-widget" data-widget></div>' : '') +
         (t.w === 'garage' ? '<div class="tb-widget"><h3>Your daily gauges</h3><p class="muted">Log five gauges in under a minute; your Garage draws the 30-day chart.</p><a class="ui-btn primary" href="#garage" data-go="garage">' + UI.icon('dash') + 'Open my garage</a></div>' : '') +
@@ -3597,6 +4306,7 @@
       else if (t.w === 'ground') ground(box);
       else if (t.w.indexOf('timer:') === 0) timerWidget(box, +t.w.split(':')[1], t.w.split(':')[2] || 'Timer');
       else if (t.w === 'sheet') sheet(box, t);
+      else if (t.w.indexOf('adhd:') === 0 && BM.W && BM.W[t.w.slice(5)]) BM.W[t.w.slice(5)](box, t);
     }
     return Promise.resolve();
   }

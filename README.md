@@ -30,8 +30,9 @@ it's for fun and self-reflection, never medical advice**, and the app says so on
   light stemming and typo tolerance ("narcisist"), grouped into manual entries, upbringing patterns, tools and checks.
 - **Diagnose → Warning lights** (`#diagnose`): 75 symptom lamps by system; ticking them ranks the matching entries
   live with how many of each entry's lights are on. Crisis lights open the Emergency brake. Saved in the browser.
-- **Diagnose → Checks** (`#diagnose/scans`, `#scan/<id>`): 30 checks. Four published screeners word for word with
-  official scoring (PHQ-9, GAD-7, PC-PTSD-5 with its opening question, AUDIT-C), 24 plain-language pattern checks
+- **Diagnose → Checks** (`#diagnose/scans`, `#scan/<id>`): 31 checks. Five published screeners word for word with
+  official scoring (PHQ-9, GAD-7, PC-PTSD-5 with its opening question, AUDIT-C, and the ASRS v1.1 adult ADHD screener
+  with its shaded-box count), 24 plain-language pattern checks
   clearly labelled "not validated" (ADHD, panic, social anxiety, OCD, burnout, sleep, autism, narcissistic traits,
   relationship red flags, BPD, attachment style with a two-dial quadrant, people-pleasing, imposter, codependency,
   emotional neglect, perfectionism, loneliness, phone use, eating, self-esteem, anger, sensitivity, high mood, grief),
@@ -45,10 +46,25 @@ it's for fun and self-reflection, never medical advice**, and the app says so on
   violence, narcissistic parent, guilt trips, silent treatment, shaming, gaslighting, golden child/scapegoat,
   rigid beliefs, body comments, divorce, loss, bullying… Each: what it looked like, what it can install, the inner
   voice it leaves, how people rewire it, tools, research notes.
-- **Toolbox** (`#toolbox`, `#toolbox/<id>`): 41 techniques with steps and evidence (CBT, DBT, ACT, CBT-I, habit
+- **ADHD Pit Lane** (`#adhd`, `#adhd/<section>`): one bay for ADHD help, relief and support ("a race-car engine with
+  bicycle brakes"). Relief right now (six tools by feeling: too much in my head, time vanishing, can't start, rejection
+  stung, need company, bored and itchy; it reminds you of your parked list), Is it ADHD? (the ASRS screener + our pattern
+  check, DSM-5-TR criteria, the three presentations), how the engine works (attention, executive functions, time
+  blindness, interest-based engine, emotional floods, rejection sensitivity, body clock, hormones, co-occurring
+  conditions; each labelled research-backed or popular concept), six myths, what helps graded from strong evidence to
+  not supported (medication, CBT, coaching, exercise, light, omega-3, neurofeedback, diets; sources such as Ostinelli
+  2025 Lancet Psychiatry, Zhang 2025 BMJ), daily systems (work, money, home, relationships, driving, body), getting
+  assessed (route, red flags in ADHD services, US/Canada/Québec/UK/Australia/France), support groups with links, and a
+  page for loved ones. In the nav, footer, landing, the ADHD manual entry and the ADHD check results.
+- **Toolbox** (`#toolbox`, `#toolbox/<id>`): 50 techniques with steps and evidence (CBT, DBT, ACT, CBT-I, habit
   research). Live widgets: breathing pacer (physiological sigh, slow exhale, box), 5-4-3-2-1 grounding walk-through,
-  timers (pomodoro, urge surfing, anger timeout, wind-down…) and 15 worksheets (thought record, safety plan, worry
-  time, DEAR MAN, boundary script, exposure ladder, reparenting…) that members save and guests download as text.
+  timers (pomodoro, urge surfing, anger timeout, wind-down…) and 17 worksheets (thought record, safety plan, worry
+  time, DEAR MAN, boundary script, exposure ladder, reparenting, slice the task, medication check-in…) that members
+  save and guests download as text. The **ADHD pit crew** category adds an overwhelm reset (breathe, brain dump, pick
+  one, shrink it, 10-minute disc; the rest is parked), make time visible (a Time-Timer-style shrinking disc + a
+  time-estimate trainer that works out your personal multiplier), a dopamine menu builder, a printable launch-pad door
+  card, a hyperfocus exit ramp, when rejection hits hard and money brakes. Their lists stay in the browser; members
+  can save them to the logbook.
 - **Find a pro** (`#help`): crisis lines, who's who (GP, psychologist, psychiatrist…), therapies and what they're best
   for, finding and affording help by country, what to bring, questions to ask, red flags.
 - **Work order** (`#workorder`): a printable one-page summary of chosen check results, ticked warning lights, what
@@ -107,7 +123,8 @@ python tools/deploy.py --push "Message"          # deploy: commit + push to GitH
 ```
 web/            core.js/core.css (shared engine + design tokens), app.js (header + plaque, footer, tab bar), pages/*.html
 web/pages/_bm.html               shared look, icons, crisis panel, cards, lookup engine, gauges, device results
-web/pages/_bmd_*.html            the content: conditions + lights, factory patterns, tools, scans
+web/pages/_bmd_*.html            the content: conditions + lights, factory patterns, tools, scans, ADHD Pit Lane
+web/pages/_bmw_adhd.html         the ADHD pit-crew widgets (overwhelm reset, visible timer, dopamine menu, door card)
 client_code/    Main.py (the only Anvil form: bridge to the server, sign-in), legal.py
 server_code/    common.py, Accounts.py, Feedback.py, Admin.py, DemoData.py, legal_server.py, Logbook.py, Stats.py
 assets/         icon.svg (armchair) + generated PNG icons (served at _/theme/<name>)
