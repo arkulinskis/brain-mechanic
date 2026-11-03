@@ -2940,6 +2940,21 @@
 })();
 
 /* ===== landing.html ===== */
+// Watch section: swap the video's cover for YouTube's player (privacy-enhanced) only when it's pressed.
+  if (!window.__ytFilm) {
+    window.__ytFilm = true;
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('[data-yt-film]') : null;
+      if (!b) return;
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + b.getAttribute('data-yt-film') + '?autoplay=1&rel=0&playsinline=1';
+      f.title = b.getAttribute('data-yt-title') || 'Video';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      b.parentNode.replaceChild(f, b);
+    });
+  }
 (function () {
   var esc = UI.esc;
   var TRY = ['can’t focus', 'panic at night', 'my mum', 'narcissist', 'can’t say no', 'always tired'];
@@ -3041,6 +3056,7 @@
 
       '<section class="lp-section"><div class="ui-wrap">' + BM.note('<b>Nobody here is a doctor.</b> Brain Mechanic is for fun and self-reflection only and is in no way medical advice. Think of it as the owner’s manual in the glovebox: handy for knowing what a light means, and for knowing when to take the car to a real mechanic.') + '</div></section>' +
 
+      '<section class="lp-section ytf" id="watch"><div class="ui-wrap"><div class="ytf-in"><div class="ytf-copy"><div class="eyebrow"><svg viewBox="0 0 28 20" width="20" height="14" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0033"/><path d="M11.2 5.8v8.4l7.3-4.2z" fill="#fff"/></svg>Watch</div><h2>See Brain Mechanic in about a minute</h2><p>A short video tour of what Brain Mechanic does and how it works.</p><a class="ytf-link" href="https://www.youtube.com/watch?v=5BWx9DjbcDs" target="_blank" rel="noopener">Watch on YouTube &#8599;</a></div><div><div class="ytf-frame"><button type="button" class="ytf-cover" data-yt-film="5BWx9DjbcDs" data-yt-title="Brain Mechanic video" aria-label="Play the Brain Mechanic video (1:14)"><img src="_/theme/yt-cover.jpg" alt="" loading="lazy" decoding="async" width="960" height="540"><span class="ytf-play" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6c5.2 1.4 26.5 1.4 26.5 1.4s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#FF0033"/><path d="M45 24 27 14v20z" fill="#fff"/></svg></span><span class="ytf-len">1:14</span></button></div><p class="ytf-note">The video loads from YouTube when you press play.</p></div></div></div></section>' +
       '<section class="lp-section" id="how"><div class="ui-wrap"><div class="lp-head"><h2>How the shop works</h2><p>The way a good mechanic works: listen to the noise, read the lights, run the diagnostics, then fix what you can and refer the rest.</p></div>' +
         '<div class="lp-steps">' + [['search', 'Describe the noise', 'Type it in plain words (“can’t focus”, “my dad”) and the manual finds the matching entries.'],
           ['brake', 'Read the warning lights', 'Tick the symptoms that are on. The board ranks what they usually point to.'],
