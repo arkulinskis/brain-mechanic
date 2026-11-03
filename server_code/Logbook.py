@@ -14,7 +14,7 @@ from . import common as C
 from . import DemoData
 
 # The check ids the pages know (web/pages/_bmd_scans.html). Keep in step.
-SCAN_IDS = {"phq9", "gad7", "pcptsd5", "auditc", "adhd", "panic", "social", "ocd", "burnout", "insomnia", "autism",
+SCAN_IDS = {"phq9", "gad7", "pcptsd5", "auditc", "asrs", "adhd", "panic", "social", "ocd", "burnout", "insomnia", "autism",
             "narc_self", "relationship", "bpd", "pleaser", "imposter", "attachment", "codependency", "cen", "perfection",
             "lonely", "phone", "eating", "selfesteem", "anger", "hsp", "mood_high", "grief", "aces", "factory"}
 PLAN_KINDS = {"condition", "pattern", "tool"}
