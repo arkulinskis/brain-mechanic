@@ -446,7 +446,7 @@
     },
     footer: function () {
       var link = function (go, label) { return '<a href="#' + go + '" data-go="' + go + '">' + label + '</a>'; };
-      return '<div class="ui-footer-in"><div class="ui-footer-brand">' + brand() + '<p class="muted small">' + esc(UI.config.tagline) + '</p></div>' +
+      return '<div class="ui-footer-in"><div class="ui-footer-brand">' + brand() + '<p class="muted small">' + esc(UI.config.tagline) + '</p><p class="small muted ui-footer-org">Contact developer: <a href="https://arkvital.com" target="_blank" rel="noopener">arkvital.com</a><br>Parent company: <a href="https://addanapp.com" target="_blank" rel="noopener">addanapp.com</a></p></div>' +
         '<div class="ui-footer-links">' +
         link('manual', 'Repair manual') + link('diagnose', 'Diagnose') + link('factory', 'Upbringing') + link('adhd', 'ADHD Pit Lane') + link('toolbox', 'Toolbox') + link('help', 'Find a pro') +
         link('workorder', 'Work order') + link('landing', 'About') +
