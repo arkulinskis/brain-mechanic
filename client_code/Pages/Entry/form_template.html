@@ -1,0 +1,48 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <a class="bm-back" anvil:name="back_link" href="#manual"><i class="ic ic-back"></i><anvil-component type="Label" name="back_text"></anvil-component></a>
+      <div class="bm-art-head">
+        <div class="mn-entry-meta">
+          <anvil-component type="Label" name="code" prop:role='["bm-code"]'></anvil-component>
+          <anvil-component type="Label" name="status" prop:role='["bm-st"]'></anvil-component>
+          <span class="mn-where"><i class="ic" anvil:name="where_icon"></i><anvil-component type="Label" name="where"></anvil-component></span>
+        </div>
+        <anvil-component type="Label" name="title" prop:role='["art-title"]'></anvil-component>
+        <anvil-component type="Label" name="line" prop:role='["art-line"]'></anvil-component>
+        <anvil-component type="Label" name="aka" prop:role='["fine-print", "art-aka"]'></anvil-component>
+      </div>
+      <a class="mn-bay" href="#adhd" anvil:name="bay_link"><i class="ic ic-flag"></i><span><b>Open the ADHD Pit Lane</b>Relief tools, the ASRS screener, what really helps, daily systems and how to get assessed.</span><i class="ic ic-arrow"></i></a>
+      <div class="bm-see urgent-box" anvil:name="urgent_box"><h3><i class="ic ic-brake"></i>If this is you right now</h3><p>Please talk to someone today. You don’t have to explain it well.</p><button type="button" class="bm-brake" anvil:on-dom:click="self.brake_click"><i class="ic ic-brake"></i>Open the emergency brake</button></div>
+      <div class="bm-art">
+        <div>
+          <section class="bm-sec"><h2><i class="ic ic-brake"></i>Warning lights</h2><anvil-component type="RepeatingPanel" name="signs_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "warn"]'></anvil-component></section>
+          <section class="bm-sec"><h2><i class="ic ic-engine"></i>Under the hood</h2>
+            <anvil-component type="Label" name="under" prop:role='["sec-p"]'></anvil-component>
+            <p class="small muted"><anvil-component type="Label" name="status_lead" prop:role='["li-b"]'></anvil-component> <anvil-component type="Label" name="status_note" prop:role='["inline"]'></anvil-component></p>
+          </section>
+          <section class="bm-sec" anvil:name="myth_sec"><h2><i class="ic ic-bulb"></i>Garage myth</h2><anvil-component type="RepeatingPanel" name="myth_panel" prop:item_template="Brain_Mechanic.Items.Myth" prop:role='["myth-list"]'></anvil-component></section>
+          <section class="bm-sec"><h2><i class="ic ic-shield"></i>What the professionals do</h2><anvil-component type="Label" name="pro" prop:role='["sec-p"]'></anvil-component></section>
+          <section class="bm-sec"><h2><i class="ic ic-wrench"></i>Self-repair: what you can try</h2><anvil-component type="RepeatingPanel" name="diy_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "good"]'></anvil-component></section>
+          <section class="bm-sec" anvil:name="tools_sec"><h2><i class="ic ic-wrench"></i>Tools for this</h2><anvil-component type="RepeatingPanel" name="tools_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></section>
+          <section class="bm-sec mn-mix" anvil:name="mix_sec"><h2><i class="ic ic-refresh"></i>Often mixed up with</h2><anvil-component type="RepeatingPanel" name="mix_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["bm-links"]'></anvil-component></section>
+          <section class="bm-sec" anvil:name="pats_sec"><h2><i class="ic ic-factory"></i>Factory settings that can feed it</h2><anvil-component type="RepeatingPanel" name="pats_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></section>
+          <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+        </div>
+        <aside class="bm-side">
+          <div class="ui-card" anvil:name="scan_card"><h3 class="side-h">Run the check</h3>
+            <anvil-component type="Label" name="scan_meta" prop:role='["fine-print"]'></anvil-component>
+            <a class="ui-btn primary block" anvil:name="scan_link" href="#scan"><i class="ic ic-scan"></i>Start the check</a></div>
+          <div class="ui-card bm-stat"><b>How common</b><anvil-component type="Label" name="stat"></anvil-component></div>
+          <div class="ui-card"><b class="side-cap">Lights it uses</b><anvil-component type="RepeatingPanel" name="lights_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["mn-lights"]'></anvil-component></div>
+          <div class="bm-see"><h3><i class="ic ic-brake"></i>Take it to a pro when…</h3><anvil-component type="RepeatingPanel" name="see_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "bad"]'></anvil-component>
+            <p class="see-more"><a href="#help">Who to see, and how <i class="ic ic-arrow"></i></a></p></div>
+          <div class="ui-row">
+            <anvil-component type="Brain_Mechanic.Components.PlanButton" name="plan_button"></anvil-component>
+            <a class="ui-btn ghost" href="#workorder"><i class="ic ic-clipboard"></i>Work order</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

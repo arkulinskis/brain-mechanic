@@ -1,0 +1,6 @@
+<div class="ui-card pl-sys-card">
+  <div class="tile-h"><i class="ic" anvil:name="icon"></i><anvil-component type="Label" name="title" prop:role='["tile-title"]' bind:text="self.item['title']"></anvil-component></div>
+  <anvil-component type="Label" name="line" prop:role='["pl-line"]' bind:text="self.item['line']"></anvil-component>
+  <anvil-component type="RepeatingPanel" name="tips_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "good"]'></anvil-component>
+  <anvil-component type="RepeatingPanel" name="chips_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["bm-links"]'></anvil-component>
+</div>

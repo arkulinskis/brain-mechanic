@@ -1,0 +1,22 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head"><div><h1>Diagnose: which lights are on?</h1>
+        <p class="muted">Tick everything you’ve noticed over the last few weeks. The board shows what those lights usually point to.</p></div>
+        <anvil-component type="Button" name="clear_button" prop:text="Switch all off" prop:role='["btn", "btn-ghost", "ic-refresh"]'></anvil-component></div>
+      <nav class="ui-tabs dg-tabs"><a href="#diagnose" class="on"><i class="ic ic-brake"></i>Warning lights</a><a href="#diagnose/scans"><i class="ic ic-scan"></i>Diagnostic checks <anvil-component type="Label" name="scans_count" prop:role='["count"]'></anvil-component></a></nav>
+      <div class="dg-board">
+        <anvil-component type="RepeatingPanel" name="board_panel" prop:item_template="Brain_Mechanic.Items.LampGroup" prop:role='["dg-groups"]'></anvil-component>
+        <aside class="dg-out" anvil:name="out" id="dg-out">
+          <div class="dg-panel"><div class="ui-row between"><div><h2>Diagnostic panel</h2><anvil-component type="Label" name="panel_sub" prop:role='["dg-sub"]'></anvil-component></div>
+            <anvil-component type="Label" name="count" prop:role='["cnt"]'></anvil-component></div></div>
+          <div class="bm-see" anvil:name="crisis_box"><h3><i class="ic ic-brake"></i>One of these needs attention today</h3><p>Thoughts of death or self-harm deserve real help, now. You don’t have to be in immediate danger to call.</p><button type="button" class="bm-brake" anvil:on-dom:click="self.brake_click"><i class="ic ic-brake"></i>Emergency brake</button></div>
+          <anvil-component type="RepeatingPanel" name="matches_panel" prop:item_template="Brain_Mechanic.Items.Match" prop:role='["dg-matches"]'></anvil-component>
+          <p class="small muted" anvil:name="matches_note">Matches show which manual entries share your lights, not what you “have”. Several lights point to many things at once; that’s normal. <a href="#workorder">Put your lights on a work order</a>.</p>
+          <div class="ui-empty dg-empty" anvil:name="empty_box"><i class="ic ic-dash"></i><h3>All lights off</h3><p>Tick the ones you recognise. Nothing is saved anywhere but this browser.</p></div>
+        </aside>
+      </div>
+      <div class="dg-bar" anvil:name="bar"><a class="ui-btn primary" href="#dg-out" anvil:on-dom:click="self.jump_click"><i class="ic ic-dash"></i><anvil-component type="Label" name="jump_text" prop:role='["inline"]'></anvil-component></a></div>
+    </div>
+  </anvil-block>
+</anvil-form>

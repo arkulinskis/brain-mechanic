@@ -1,0 +1,17 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="fs-hero">
+        <div><h1>Factory settings: what your upbringing installed</h1>
+          <anvil-component type="Label" name="lead" prop:role='["lead-muted", "fs-lead"]'></anvil-component>
+          <p class="muted small">Understanding isn’t blaming. Most parents passed on what they were given, and you can hold “they did their best” and “it hurt me” at the same time.</p></div>
+        <div class="ui-card fs-check"><h2 class="side-h">Run the check</h2>
+          <anvil-component type="Label" name="check_text"></anvil-component>
+          <a class="ui-btn primary block" href="#scan/factory"><i class="ic ic-scan"></i>Factory Settings check</a>
+          <a class="ui-btn block" href="#scan/aces">Childhood adversity count (ACEs)</a></div>
+      </div>
+      <anvil-component type="RepeatingPanel" name="groups_panel" prop:item_template="Brain_Mechanic.Items.Group" prop:role='["fs-groups"]'></anvil-component>
+      <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

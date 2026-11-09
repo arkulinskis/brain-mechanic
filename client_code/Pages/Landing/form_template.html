@@ -1,0 +1,91 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <section class="lp-hero"><div class="ui-wrap"><div>
+      <h1>Pull up a chair. Let’s look <em>under the hood.</em></h1>
+      <p class="lp-lead">A repair manual for the human mind. Look up what you’re going through, see which warning lights are on, find out what your upbringing installed, and leave with tools to try and a work order for a real professional.</p>
+      <div class="lp-ask"><div class="lp-ask-row">
+        <label class="bm-search"><i class="ic ic-search"></i><anvil-component type="TextBox" name="ask_box" prop:placeholder="What’s the noise? Describe it in your own words"></anvil-component></label>
+        <anvil-component type="Button" name="ask_button" prop:text="Look it up" prop:role='["btn", "btn-primary"]'></anvil-component>
+      </div></div>
+      <div class="lp-try"><span>Try:</span><anvil-component type="RepeatingPanel" name="try_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["contents"]'></anvil-component></div>
+      <div class="lp-cta">
+        <a class="ui-btn primary lg" href="#diagnose"><i class="ic ic-scan"></i>Run a free diagnostic</a>
+        <a class="ui-btn lg" href="#garage" anvil:name="garage_cta">Open my garage</a>
+        <a class="ui-btn lg" href="#auth/signup" anvil:name="signup_cta">Keep a logbook</a>
+      </div>
+      <div class="lp-proof">
+        <span><i class="ic ic-check"></i><anvil-component type="Label" name="proof_conditions"></anvil-component></span>
+        <span><i class="ic ic-check"></i><anvil-component type="Label" name="proof_patterns"></anvil-component></span>
+        <span><i class="ic ic-check"></i><anvil-component type="Label" name="proof_tools"></anvil-component></span>
+        <span><i class="ic ic-check"></i>Free, no account needed</span>
+      </div>
+    </div>
+    <anvil-component type="Brain_Mechanic.Components.Office" name="office"></anvil-component>
+    </div></section>
+
+    <section class="lp-section"><div class="ui-wrap"><anvil-component type="Brain_Mechanic.Components.Note" name="glovebox_note" prop:message="Nobody here is a doctor. Brain Mechanic is for fun and self-reflection only and is in no way medical advice. Think of it as the owner’s manual in the glovebox: handy for knowing what a light means, and for knowing when to take the car to a real mechanic."></anvil-component></div></section>
+
+    <section class="lp-section ytf" id="watch">
+      <div class="ui-wrap">
+        <div class="ytf-in">
+          <div class="ytf-copy">
+            <h2>See Brain Mechanic in about a minute</h2>
+            <p>A short video tour of what Brain Mechanic does and how it works.</p>
+            <a class="ytf-link" href="https://www.youtube.com/watch?v=5BWx9DjbcDs" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" width="20" height="14" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0033"/><path d="M11.2 5.8v8.4l7.3-4.2z" fill="#fff"/></svg>Watch on YouTube &#8599;</a>
+          </div>
+          <div>
+            <div class="ytf-frame" anvil:dom-node="yt_frame">
+              <button type="button" class="ytf-cover" anvil:dom-node="yt_cover" aria-label="Play the Brain Mechanic video (1:14)">
+                <img src="_/theme/yt-cover.jpg" alt="" loading="lazy" decoding="async" width="960" height="540">
+                <span class="ytf-play" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6c5.2 1.4 26.5 1.4 26.5 1.4s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#FF0033"/><path d="M45 24 27 14v20z" fill="#fff"/></svg></span>
+                <span class="ytf-len">1:14</span>
+              </button>
+            </div>
+            <p class="ytf-note">The video loads from YouTube when you press play.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-section" id="how"><div class="ui-wrap">
+      <div class="lp-head"><h2>How the shop works</h2><p>The way a good mechanic works: listen to the noise, read the lights, run the diagnostics, then fix what you can and refer the rest.</p></div>
+      <anvil-component type="RepeatingPanel" name="steps_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["lp-steps"]'></anvil-component>
+    </div></section>
+
+    <section class="lp-section"><div class="ui-wrap">
+      <div class="lp-head"><h2>What’s under the hood</h2><p>Ten systems, from steering (focus) to factory settings (childhood). Pick one to open its section of the manual.</p></div>
+      <anvil-component type="RepeatingPanel" name="systems_panel" prop:item_template="Brain_Mechanic.Items.BigLink" prop:role='["lp-systems"]'></anvil-component>
+    </div></section>
+
+    <section class="lp-section"><div class="ui-wrap"><div class="lp-factory">
+      <div><h2>Factory settings: your parents installed some of your software</h2>
+        <anvil-component type="Label" name="factory_text" prop:role='["lp-p"]'></anvil-component>
+        <div class="ui-row"><a class="ui-btn primary" href="#scan/factory">Run the Factory Settings check</a><a class="ui-btn" href="#factory">Browse patterns</a></div>
+      </div>
+      <anvil-component type="RepeatingPanel" name="patterns_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component>
+    </div></div></section>
+
+    <section class="lp-section" id="pit"><div class="ui-wrap"><div class="lp-pit">
+      <div><h2>The ADHD Pit Lane: a race-car engine with bicycle brakes?</h2>
+        <p class="muted">A whole bay for ADHD: relief when your head is too full, the six-question adult screener, a timer that makes time visible, and an honest look at what helps, from medication to coaching, with the evidence for each.</p>
+        <div class="ui-row"><a class="ui-btn primary" href="#adhd"><i class="ic ic-flag"></i>Enter the Pit Lane</a><a class="ui-btn" href="#scan/asrs">Take the screener</a></div>
+      </div>
+      <anvil-component type="RepeatingPanel" name="pit_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component>
+    </div></div></section>
+
+    <section class="lp-section"><div class="ui-wrap">
+      <div class="lp-head"><h2>The fine print, in big letters</h2></div>
+      <anvil-component type="RepeatingPanel" name="fine_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["lp-fine"]'></anvil-component>
+    </div></section>
+
+    <section class="lp-section"><div class="ui-wrap">
+      <div class="lp-head"><h2>Questions from the waiting room</h2></div>
+      <anvil-component type="RepeatingPanel" name="faq_panel" prop:item_template="Brain_Mechanic.Items.Faq" prop:role='["lp-faq"]'></anvil-component>
+    </div></section>
+
+    <section class="lp-section"><div class="ui-wrap"><div class="lp-band">
+      <div><h2>The chair’s free. Sit down.</h2><p>Start with what’s bothering you most. It takes two minutes.</p></div>
+      <a class="ui-btn lg" href="#diagnose"><i class="ic ic-scan"></i>Start the diagnostic</a>
+    </div></div></section>
+  </anvil-block>
+</anvil-form>

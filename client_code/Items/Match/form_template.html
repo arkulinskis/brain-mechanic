@@ -1,0 +1,9 @@
+<div class="dg-match">
+  <div class="row"><anvil-component type="Label" name="code" prop:role='["bm-code"]' bind:text="self.item['code']"></anvil-component><anvil-component type="Label" name="name" prop:role='["strong"]' bind:text="self.item['n']"></anvil-component></div>
+  <div class="bm-meter"><span anvil:name="fill"></span></div>
+  <anvil-component type="Label" name="hits" prop:role='["dg-hits"]' bind:text="self.item['hits_text']"></anvil-component>
+  <div class="acts">
+    <a class="ui-btn sm" anvil:name="read_link" href="#manual">Read entry</a>
+    <a class="ui-btn sm primary" anvil:name="scan_link" href="#scan"><i class="ic ic-scan"></i>Run the check</a>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head"><div><h1>Diagnostic checks</h1>
+        <p class="muted">Two to five minutes each. Answers are scored in your browser; nothing is sent anywhere unless you save it to your logbook.</p></div></div>
+      <nav class="ui-tabs dg-tabs"><a href="#diagnose"><i class="ic ic-brake"></i>Warning lights</a><a href="#diagnose/scans" class="on"><i class="ic ic-scan"></i>Diagnostic checks <anvil-component type="Label" name="scans_count" prop:role='["count"]'></anvil-component></a></nav>
+      <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+      <section class="dg-groups" anvil:name="recent_sec"><h2>On this device</h2>
+        <anvil-component type="Label" name="recent_text" prop:role='["dg-p"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="recent_panel" prop:item_template="Brain_Mechanic.Items.Recent" prop:role='["dg-recent"]'></anvil-component>
+        <p class="dg-wo"><a class="ui-btn sm brass" href="#workorder"><i class="ic ic-clipboard"></i>Make a work order</a></p>
+      </section>
+      <section class="dg-groups"><h2>Popular in the waiting room</h2><p>The checks people run most this month (anonymous counts).</p>
+        <div class="dg-top"><anvil-component type="RepeatingPanel" name="top_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["contents"]'></anvil-component><anvil-component type="Label" name="top_total" prop:role='["fine-print", "dg-total"]'></anvil-component></div>
+      </section>
+      <anvil-component type="RepeatingPanel" name="groups_panel" prop:item_template="Brain_Mechanic.Items.Group" prop:role='["dg-kinds"]'></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

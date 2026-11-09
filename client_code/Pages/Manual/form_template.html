@@ -1,0 +1,24 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="mn-top">
+        <div><h1>The repair manual: what’s that noise?</h1>
+          <anvil-component type="Label" name="count_text" prop:role='["lead-muted"]'></anvil-component></div>
+        <label class="bm-search"><i class="ic ic-search"></i><anvil-component type="TextBox" name="q_box" prop:placeholder="e.g. can’t focus, my dad yells, panic at night"></anvil-component></label>
+        <anvil-component type="FlowPanel" name="chips_box" prop:role='["bm-chips"]' prop:spacing="none">
+          <anvil-component type="Button" name="all_chip" prop:text="All systems" prop:role='["bm-chip"]'></anvil-component>
+        </anvil-component>
+        <div class="mn-legend"><span>Labels:</span><anvil-component type="RepeatingPanel" name="legend_panel" prop:item_template="Brain_Mechanic.Items.Badge" prop:role='["contents"]'></anvil-component><span>Hover a label for what it means.</span></div>
+      </div>
+      <div class="lp-try mn-popular" anvil:name="popular_box"><span>People look up:</span><anvil-component type="RepeatingPanel" name="popular_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["contents"]'></anvil-component></div>
+      <div class="ui-empty mn-none" anvil:name="none_box">
+        <i class="ic ic-search"></i>
+        <anvil-component type="Label" name="none_title" prop:role='["empty-title"]'></anvil-component>
+        <p>Try other words, or tick the warning lights you notice.</p>
+        <a class="ui-btn primary" href="#diagnose">Check warning lights</a>
+      </div>
+      <anvil-component type="RepeatingPanel" name="groups_panel" prop:item_template="Brain_Mechanic.Items.Group" prop:role='["mn-groups"]'></anvil-component>
+      <div class="page-note"><anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component></div>
+    </div>
+  </anvil-block>
+</anvil-form>

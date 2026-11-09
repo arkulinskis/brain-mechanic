@@ -1,0 +1,12 @@
+<section class="bm-group">
+  <div class="bm-group-head">
+    <span class="gic" anvil:name="icon_box"><i class="ic" anvil:name="icon"></i></span>
+    <div class="grow">
+      <div class="gh"><anvil-component type="Label" name="title" prop:role='["group-title"]' bind:text="self.item['title']"></anvil-component><anvil-component type="Label" name="count" prop:role='["count"]' bind:text="str(self.item.get('count', ''))"></anvil-component></div>
+      <anvil-component type="Label" name="line" prop:role='["group-line"]' bind:text="self.item.get('line', '')"></anvil-component>
+    </div>
+    <anvil-component type="Label" name="code" prop:role='["bm-code"]' bind:text="self.item.get('code', '')"></anvil-component>
+  </div>
+  <anvil-component type="RepeatingPanel" name="cards_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component>
+  <a class="bm-more" anvil:name="more_link" href="#factory"><anvil-component type="Label" name="more_text" bind:text="self.item.get('link_text', '')"></anvil-component><i class="ic ic-arrow"></i></a>
+</section>

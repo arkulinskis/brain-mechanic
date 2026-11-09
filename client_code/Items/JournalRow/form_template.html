@@ -1,0 +1,7 @@
+<div>
+  <details class="gr-jd">
+    <summary><span><anvil-component type="Label" name="title" prop:role='["strong"]' bind:text="self.item['title']"></anvil-component><anvil-component type="Label" name="when" prop:role='["fine-print"]' bind:text="self.item['when']"></anvil-component></span><i class="ic ic-chevron"></i></summary>
+    <anvil-component type="RepeatingPanel" name="fields_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["gr-dl"]'></anvil-component>
+    <anvil-component type="Button" name="delete_button" prop:text="Delete" prop:role='["btn", "btn-sm", "btn-danger", "ic-trash"]'></anvil-component>
+  </details>
+</div>

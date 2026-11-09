@@ -1,0 +1,9 @@
+<div class="ui">
+  <h2 class="dlg-h">Keep a logbook</h2>
+  <anvil-component type="Label" name="why" prop:role='["fine-print", "ask-why"]'></anvil-component>
+  <div class="ui-row end">
+    <anvil-component type="Button" name="later_button" prop:text="Not now" prop:role='["btn", "btn-ghost"]'></anvil-component>
+    <a class="ui-btn ghost" href="#auth" anvil:on-dom:click="self.link_click">Sign in</a>
+    <a class="ui-btn primary" href="#auth/signup" anvil:on-dom:click="self.link_click">Create a free account</a>
+  </div>
+</div>

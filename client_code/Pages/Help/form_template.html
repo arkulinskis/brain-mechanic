@@ -1,0 +1,22 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head"><div><h1>Find a mechanic: taking it to a professional</h1>
+        <p class="muted">The manual tells you what a light might mean. A professional opens the hood. Here’s who does what, which therapies work for what, and how to get the most from an appointment.</p></div>
+        <a class="ui-btn primary" href="#workorder"><i class="ic ic-clipboard"></i>Make a work order</a></div>
+      <div class="hp-crisis"><anvil-component type="Brain_Mechanic.Components.CrisisBox" name="crisis_box"></anvil-component></div>
+      <section class="hp-sec"><h2><i class="ic ic-users"></i>Who’s who in the garage</h2><p>Titles vary by country. When in doubt, start with a family doctor.</p><anvil-component type="RepeatingPanel" name="who_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["hp-who"]'></anvil-component></section>
+      <section class="hp-sec"><h2><i class="ic ic-wrench"></i>Types of tune-up</h2><p>Talk therapies with strong evidence, and what each is best known for. The relationship with your therapist matters as much as the method: research consistently finds the “therapeutic alliance” is one of the best predictors of good outcomes.</p><anvil-component type="RepeatingPanel" name="therapy_panel" prop:item_template="Brain_Mechanic.Items.Row3" prop:role='["hp-table"]'></anvil-component></section>
+      <section class="hp-sec"><h2><i class="ic ic-map"></i>Finding (and affording) help</h2><anvil-component type="RepeatingPanel" name="country_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["hp-country"]'></anvil-component></section>
+      <section class="hp-sec"><h2><i class="ic ic-clipboard"></i>Getting the most from an appointment</h2>
+        <div class="hp-two">
+          <div class="ui-card"><h3 class="side-h">Bring</h3><anvil-component type="RepeatingPanel" name="bring_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "good"]'></anvil-component>
+            <a class="ui-btn brass hp-wo" href="#workorder"><i class="ic ic-clipboard"></i>Build my work order</a></div>
+          <div class="ui-card"><h3 class="side-h">Questions to ask a therapist</h3><anvil-component type="RepeatingPanel" name="ask_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list"]'></anvil-component></div>
+        </div>
+      </section>
+      <section class="hp-sec"><h2><i class="ic ic-brake"></i>Red flags in a therapist</h2><p>It’s fine to switch. Most people try more than one before it clicks.</p><anvil-component type="RepeatingPanel" name="flags_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "bad"]'></anvil-component></section>
+      <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

@@ -1,0 +1,32 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <a class="bm-back" href="#factory"><i class="ic ic-back"></i>Factory settings</a>
+      <div class="bm-art-head">
+        <div class="ui-row"><anvil-component type="Label" name="code" prop:role='["bm-code"]'></anvil-component><anvil-component type="RepeatingPanel" name="aka_panel" prop:item_template="Brain_Mechanic.Items.Badge" prop:role='["contents"]'></anvil-component></div>
+        <anvil-component type="Label" name="title" prop:role='["art-title"]'></anvil-component>
+        <anvil-component type="Label" name="line" prop:role='["art-line"]'></anvil-component>
+      </div>
+      <div class="bm-art">
+        <div>
+          <div class="fs-voice"><small>The inner voice it can leave</small><anvil-component type="Label" name="voice"></anvil-component></div>
+          <div class="fs-two">
+            <section class="ui-card"><h2 class="card-h2">What it looked like</h2><anvil-component type="RepeatingPanel" name="looked_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list"]'></anvil-component></section>
+            <section class="ui-card"><h2 class="card-h2">What it can install</h2><anvil-component type="RepeatingPanel" name="installs_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "warn"]'></anvil-component></section>
+          </div>
+          <section class="bm-sec"><h2><i class="ic ic-wrench"></i>Rewiring it</h2><anvil-component type="RepeatingPanel" name="rewire_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-steps"]'></anvil-component></section>
+          <section class="bm-sec" anvil:name="tools_sec"><h2><i class="ic ic-wrench"></i>Tools for this</h2><anvil-component type="RepeatingPanel" name="tools_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></section>
+          <section class="bm-sec" anvil:name="conds_sec"><h2><i class="ic ic-book"></i>Where it can show up in the manual</h2><anvil-component type="RepeatingPanel" name="conds_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></section>
+          <anvil-component type="Brain_Mechanic.Components.Note" name="note" prop:message="Nobody here is a doctor. Recognising a pattern isn’t a diagnosis of you or your parents. If old memories feel overwhelming, a trauma-informed therapist can help you go through them safely."></anvil-component>
+        </div>
+        <aside class="bm-side">
+          <div class="ui-card bm-stat" anvil:name="research_card"><b>Research</b><anvil-component type="Label" name="research"></anvil-component></div>
+          <div class="ui-card"><b class="side-cap">Does this fit?</b>
+            <anvil-component type="Label" name="question" prop:role='["fs-q"]'></anvil-component>
+            <a class="ui-btn primary block" href="#scan/factory"><i class="ic ic-scan"></i>Take the full check</a></div>
+          <div class="ui-row"><anvil-component type="Brain_Mechanic.Components.PlanButton" name="plan_button"></anvil-component></div>
+        </aside>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

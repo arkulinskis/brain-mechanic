@@ -1,0 +1,36 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head wo-head"><div><h1>Work order: bring this to a professional</h1>
+        <p class="muted">A one-page summary so the first appointment starts in the right place. Nothing here is sent anywhere: it’s built in your browser.</p></div>
+        <div class="ui-row"><anvil-component type="Button" name="copy_button" prop:text="Copy text" prop:role='["btn", "ic-copy"]'></anvil-component><anvil-component type="Button" name="print_button" prop:text="Print or save PDF" prop:role='["btn", "btn-primary", "ic-print"]'></anvil-component></div></div>
+      <div class="wo-grid">
+        <div class="wo-edit">
+          <div class="ui-card"><h2>Check results to include</h2>
+            <anvil-component type="RepeatingPanel" name="picks_panel" prop:item_template="Brain_Mechanic.Items.Pick" prop:role='["wo-pick"]'></anvil-component>
+            <p class="muted small" anvil:name="no_results">No results yet. <a href="#diagnose/scans">Run a check</a> and it appears here.</p></div>
+          <div class="ui-card"><h2>Warning lights</h2><p class="muted small wo-lights"><anvil-component type="Label" name="lights_text" prop:role='["inline"]'></anvil-component><a href="#diagnose">Change them</a>.</p></div>
+          <div class="ui-card wo-words"><h2>In your own words</h2>
+            <label class="ui-field"><span>What I’ve noticed</span><anvil-component type="TextArea" name="noticed_box" prop:placeholder="e.g. Since spring I can’t concentrate at work, I wake at 4 am, and I snap at my kids." prop:height="110"></anvil-component></label>
+            <label class="ui-field"><span>How long it’s been going on</span><anvil-component type="TextBox" name="since_box" prop:placeholder="e.g. about 6 months"></anvil-component></label>
+            <div class="ui-field"><span>What I’d like</span><anvil-component type="RepeatingPanel" name="wants_panel" prop:item_template="Brain_Mechanic.Items.Pick" prop:role='["wo-wants"]'></anvil-component></div>
+            <label class="ui-field"><span>Questions I want to ask</span><anvil-component type="TextArea" name="questions_box" prop:placeholder="e.g. Could this be ADHD? What are my options besides medication?" prop:height="110"></anvil-component></label>
+            <p class="small muted">Your draft is kept in this browser only.</p></div>
+        </div>
+        <div>
+          <div class="wo-sheet" anvil:name="sheet">
+            <div class="ui-row between top"><div><span class="wo-cap">Brain Mechanic · work order</span><h2 class="wo-h1">Notes for my appointment</h2>
+              <anvil-component type="Label" name="who" prop:role='["wo-who"]'></anvil-component></div>
+              <span class="stamp">SELF-CHECK · NOT A DIAGNOSIS</span></div>
+            <h3>What I’ve noticed</h3><anvil-component type="Label" name="s_noticed"></anvil-component><anvil-component type="Label" name="s_since"></anvil-component>
+            <h3>Warning lights I recognise</h3><anvil-component type="RepeatingPanel" name="s_lights" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["wo-list"]'></anvil-component><p class="wo-empty-p" anvil:name="s_lights_empty">(none ticked on the Diagnose page)</p>
+            <h3>Self-check results</h3><anvil-component type="RepeatingPanel" name="s_results" prop:item_template="Brain_Mechanic.Items.WoRow" prop:role='["wo-table"]'></anvil-component><p class="wo-empty-p" anvil:name="s_results_empty">(no results selected)</p>
+            <h3>What I’d like from this appointment</h3><anvil-component type="RepeatingPanel" name="s_wants" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["wo-list"]'></anvil-component><p class="wo-empty-p" anvil:name="s_wants_empty">(pick on the left)</p>
+            <h3>My questions</h3><anvil-component type="Label" name="s_questions"></anvil-component>
+            <p class="fine">Prepared with Brain Mechanic, a self-reflection tool. Nobody at Brain Mechanic is a doctor. PHQ-9, GAD-7, PC-PTSD-5 and AUDIT-C are published screeners; other checks are informal pattern checks. Please interpret with clinical judgement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>
