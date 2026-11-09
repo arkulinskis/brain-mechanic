@@ -1,0 +1,6 @@
+<div class="dg-rec">
+  <anvil-component type="Label" name="level" prop:role='["bm-level"]' bind:text="self.item['label']"></anvil-component>
+  <div class="grow"><anvil-component type="Label" name="title" prop:role='["strong"]' bind:text="self.item['title']"></anvil-component><anvil-component type="Label" name="sub" prop:role='["fine-print"]' bind:text="self.item['sub']"></anvil-component></div>
+  <a class="ui-btn sm" anvil:name="retake" href="#scan">Retake</a>
+  <anvil-component type="Button" name="delete_button" prop:text="Delete" prop:tooltip="Delete" prop:role='["btn", "btn-sm", "btn-ghost", "btn-icon", "ic-trash"]'></anvil-component>
+</div>

@@ -1,0 +1,12 @@
+<a class="bm-card" href="#manual">
+  <div class="top">
+    <span class="sysic"><i class="ic" anvil:name="icon"></i></span>
+    <anvil-component type="Label" name="code" prop:role='["bm-code"]' bind:text="self.item['code']"></anvil-component>
+    <anvil-component type="Label" name="b1" prop:role='["bm-st"]' bind:text="self.item['b1']"></anvil-component>
+    <anvil-component type="Label" name="b2" prop:role='["bm-st"]' bind:text="self.item['b2']"></anvil-component>
+  </div>
+  <anvil-component type="Label" name="title" prop:role='["card-h"]' bind:text="self.item['title']"></anvil-component>
+  <anvil-component type="Label" name="line" prop:role='["card-line"]' bind:text="self.item['line']"></anvil-component>
+  <anvil-component type="Label" name="level" prop:role='["bm-level"]' bind:text="self.item['level']"></anvil-component>
+  <div class="foot" anvil:name="foot_box"><anvil-component type="Label" name="foot" bind:text="self.item['foot']"></anvil-component></div>
+</a>

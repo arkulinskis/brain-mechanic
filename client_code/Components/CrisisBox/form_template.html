@@ -1,0 +1,29 @@
+---
+custom_component: true
+properties: []
+events:
+  - name: leave
+    description: One of its own page links was followed (the dialog closes)
+toolbox_item:
+  title: Crisis lines
+  group: Brain Mechanic
+---
+<div class="bm-crisis">
+  <h2><i class="ic ic-brake"></i>Emergency brake</h2>
+  <p>If you might act on thoughts of suicide or self-harm, or someone is in danger, <b>call your emergency number now</b>: 911 (US, Canada), 999 (UK), 112 (EU), 000 (Australia), 111 (NZ).</p>
+  <div class="bm-urgent">You don’t have to be “bad enough” to call. Crisis lines are free, confidential, and there for exactly this moment.</div>
+  <div class="bm-lines">
+    <div class="bm-line"><b>US</b><span>Call or text <a href="tel:988">988</a> (Suicide &amp; Crisis Lifeline) · text HOME to <a href="sms:741741">741741</a></span></div>
+    <div class="bm-line"><b>Canada</b><span>Call or text <a href="tel:988">988</a> · Québec: <a href="tel:18662773553">1-866-APPELLE</a> (277-3553) · young people: Kids Help Phone <a href="tel:18006686868">1-800-668-6868</a></span></div>
+    <div class="bm-line"><b>UK &amp; Ireland</b><span>Samaritans <a href="tel:116123">116 123</a> (free, 24/7) · UK: text SHOUT to <a href="sms:85258">85258</a></span></div>
+    <div class="bm-line"><b>Australia</b><span>Lifeline <a href="tel:131114">13 11 14</a></span></div>
+    <div class="bm-line"><b>New Zealand</b><span>Call or text <a href="tel:1737">1737</a></span></div>
+    <div class="bm-line"><b>France</b><span><a href="tel:3114">3114</a> (numéro national de prévention du suicide)</span></div>
+    <div class="bm-line"><b>Anywhere</b><span><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free helplines in over 130 countries</span></div>
+  </div>
+  <p class="small muted">Living with abuse? US <a href="tel:18007997233">1-800-799-7233</a> · UK <a href="tel:08082000247">0808 2000 247</a> · Canada <a href="https://sheltersafe.ca" target="_blank" rel="noopener">sheltersafe.ca</a></p>
+  <div class="ui-row">
+    <a class="ui-btn" href="#toolbox/safety_plan" anvil:on-dom:click="self.link_click"><i class="ic ic-clipboard"></i>Make a safety plan</a>
+    <a class="ui-btn" href="#toolbox/breath_sigh" anvil:on-dom:click="self.link_click"><i class="ic ic-wind"></i>Breathe with me</a>
+  </div>
+</div>

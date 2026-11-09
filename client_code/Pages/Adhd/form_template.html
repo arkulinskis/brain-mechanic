@@ -1,0 +1,60 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <section class="pl-hero"><div><h1>The ADHD Pit Lane: a race-car engine with bicycle brakes</h1>
+        <cite>That’s how psychiatrist Edward Hallowell, who has ADHD himself, likes to describe it.</cite>
+        <p>This bay is for tuning that engine: relief when your head is too full, tools built for how an ADHD brain really works, and straight facts about what helps, with sources.</p>
+        <div class="ui-row pl-hero-acts"><a class="ui-btn primary" href="#scan/asrs"><i class="ic ic-scan"></i>Take the ADHD screener</a><a class="ui-btn brass" href="#toolbox/overwhelm_reset"><i class="ic ic-brake"></i>I’m overwhelmed</a></div></div>
+        <div class="pl-board" aria-hidden="true"><div><span>PIT</span><span class="w">LANE</span></div><div><span class="g">BOX</span><span class="g">BOX</span></div><div><span class="w">FUEL</span><span>INTEREST</span></div><div><span class="w">TIME</span><span class="r">NOW?</span></div><div><span class="w">TYRES</span><span class="g">SLEEP</span></div></div>
+      </section>
+      <div class="pl-jump"><anvil-component type="FlowPanel" name="jump_box" prop:role='["bm-chips"]' prop:spacing="none"></anvil-component></div>
+
+      <section class="pl-sec" id="pl-relief"><h2><i class="ic ic-brake"></i>Relief, right now</h2><p class="lead">Pick what fits this moment. Each one opens a tool you can use straight away, no account needed.</p>
+        <anvil-component type="RepeatingPanel" name="relief_panel" prop:item_template="Brain_Mechanic.Items.BigLink" prop:role='["pl-relief"]'></anvil-component>
+        <div class="bm-note pl-parked" anvil:name="parked_box"><i class="ic ic-save"></i><p><anvil-component type="Label" name="parked_text" prop:role='["inline"]'></anvil-component> <a href="#toolbox/overwhelm_reset">Pick the next one</a>.</p></div>
+      </section>
+
+      <section class="pl-sec" id="pl-check"><h2><i class="ic ic-scan"></i>Is it ADHD?</h2><p class="lead">Only a professional can say. These two checks help you decide whether to ask, and give you something concrete to bring.</p>
+        <anvil-component type="RepeatingPanel" name="checks_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["pl-two"]'></anvil-component>
+        <div class="pl-last" anvil:name="last_box"><i class="ic ic-clock"></i>Your last screener on this device: <anvil-component type="Label" name="last_level" prop:role='["bm-level"]'></anvil-component> <anvil-component type="Label" name="last_score" prop:role='["inline"]'></anvil-component></div>
+        <div class="pl-crit"><div class="ui-card"><h3 class="side-h">What a diagnosis needs (DSM-5-TR)</h3><anvil-component type="RepeatingPanel" name="criteria_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list"]'></anvil-component></div>
+          <anvil-component type="RepeatingPanel" name="pres_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["pl-pres"]'></anvil-component></div>
+      </section>
+
+      <section class="pl-sec" id="pl-engine"><h2><i class="ic ic-engine"></i>How the engine works</h2><p class="lead">Knowing why things go wrong turns “what’s wrong with me?” into “what does this engine need?”. Labels show which ideas are research-backed and which are popular concepts.</p>
+        <anvil-component type="RepeatingPanel" name="engine_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["pl-engine"]'></anvil-component></section>
+
+      <section class="pl-sec" id="pl-myths"><h2><i class="ic ic-bulb"></i>Garage myths</h2><p class="lead">What people say in the waiting room, and what the research says.</p>
+        <anvil-component type="RepeatingPanel" name="myths_panel" prop:item_template="Brain_Mechanic.Items.Myth" prop:role='["pl-myths"]'></anvil-component></section>
+
+      <section class="pl-sec" id="pl-helps"><h2><i class="ic ic-wrench"></i>What helps, and how sure we are</h2>
+        <p class="lead">The evidence garage. Medication decisions belong with a prescriber who knows your health; this is so you can ask good questions. Most people do best with a mix: treatment, understanding, and systems that fit.</p>
+        <anvil-component type="RepeatingPanel" name="ev_panel" prop:item_template="Brain_Mechanic.Items.Row3" prop:role='["pl-ev"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="facts_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["pl-facts"]'></anvil-component></section>
+
+      <section class="pl-sec" id="pl-systems"><h2><i class="ic ic-sliders"></i>Daily systems</h2><p class="lead">ADHD strategies work best built into your surroundings, not stored in your memory. Pick one area, try two ideas for a week.</p>
+        <anvil-component type="RepeatingPanel" name="systems_panel" prop:item_template="Brain_Mechanic.Items.SysCard" prop:role='["pl-sys"]'></anvil-component>
+        <div class="bm-note pl-late"><i class="ic ic-heart"></i><p><b>Diagnosed later in life?</b> Relief and grief often arrive together: relief that there’s a reason, grief for the years of “lazy” and “careless”. Both are normal. Many people find it helps to rewrite their story with the new facts, alone or with a therapist.</p></div>
+      </section>
+
+      <section class="pl-sec" id="pl-assess"><h2><i class="ic ic-clipboard"></i>Getting assessed</h2><p class="lead">What a proper adult assessment looks like, how to prepare, and where to start in your country.</p>
+        <div class="pl-two">
+          <div class="ui-card"><h3 class="side-h">The route</h3><anvil-component type="RepeatingPanel" name="steps_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-steps"]'></anvil-component>
+            <div class="ui-row pl-wo"><a class="ui-btn brass" href="#workorder"><i class="ic ic-clipboard"></i>Build my work order</a></div></div>
+          <div class="ui-card"><h3 class="side-h">Red flags in an ADHD service</h3><anvil-component type="RepeatingPanel" name="redflags_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "bad"]'></anvil-component>
+            <p class="small muted pl-online">Online care can be excellent. What matters is a full history, a look at other conditions, and real follow-up.</p></div>
+        </div>
+        <anvil-component type="RepeatingPanel" name="countries_panel" prop:item_template="Brain_Mechanic.Items.Tile" prop:role='["pl-countries"]'></anvil-component></section>
+
+      <section class="pl-sec" id="pl-support"><h2><i class="ic ic-users"></i>Your support crew</h2><p class="lead">Charities and services run by people who know ADHD. Peer groups are often where the best practical tips come from.</p>
+        <anvil-component type="RepeatingPanel" name="orgs_panel" prop:item_template="Brain_Mechanic.Items.BigLink" prop:role='["pl-orgs"]'></anvil-component></section>
+
+      <section class="pl-sec" id="pl-loved"><h2><i class="ic ic-heart"></i>For people who love someone with ADHD</h2><p class="lead">Partners, parents, friends and colleagues: how to help without becoming the reminder app.</p>
+        <div class="ui-card"><anvil-component type="RepeatingPanel" name="loved_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-list", "good"]'></anvil-component></div></section>
+
+      <div class="bm-see pl-more"><h3><i class="ic ic-brake"></i>When it’s more than focus</h3><p>ADHD comes with a higher risk of depression, accidents and suicidal thoughts, especially untreated. If you’re struggling, please talk to someone today.</p>
+        <div class="ui-row"><button type="button" class="bm-brake" anvil:on-dom:click="self.brake_click"><i class="ic ic-brake"></i>Open the emergency brake</button><anvil-component type="Brain_Mechanic.Components.PlanButton" name="plan_button"></anvil-component></div></div>
+      <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

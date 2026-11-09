@@ -1,0 +1,56 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head"><div><anvil-component type="Label" name="hello" prop:role='["page-title"]'></anvil-component>
+        <p class="muted">Your private logbook. Only you can see it.</p></div>
+        <a class="ui-btn" href="#workorder"><i class="ic ic-clipboard"></i>Work order</a></div>
+      <div class="gr-sample" anvil:name="sample_box"><i class="ic ic-info"></i><span><b>These are sample readings.</b> Log your first gauge reading or save a check and your own logbook takes over.</span></div>
+      <div class="gr-cluster">
+        <div class="ui-row between gr-caps"><anvil-component type="Label" name="cluster_cap" prop:role='["cap"]'></anvil-component><anvil-component type="Label" name="readings_cap" prop:role='["cap"]'></anvil-component></div>
+        <div class="gr-gauges">
+          <anvil-component type="Brain_Mechanic.Components.Gauge" name="g_mood"></anvil-component>
+          <anvil-component type="Brain_Mechanic.Components.Gauge" name="g_energy"></anvil-component>
+          <anvil-component type="Brain_Mechanic.Components.Gauge" name="g_sleep"></anvil-component>
+          <anvil-component type="Brain_Mechanic.Components.Gauge" name="g_stress"></anvil-component>
+          <anvil-component type="Brain_Mechanic.Components.Gauge" name="g_focus"></anvil-component>
+        </div>
+        <div class="gr-lamps"><span class="cap">CHECK ENGINE:</span><anvil-component type="RepeatingPanel" name="lamps_panel" prop:item_template="Brain_Mechanic.Items.LampLink" prop:role='["contents"]'></anvil-component></div>
+      </div>
+      <div class="gr-grid">
+        <div class="gr-col">
+          <div class="ui-card gr-card"><h2><i class="ic ic-dash"></i><anvil-component type="Label" name="reading_title" prop:role='["inline"]'></anvil-component></h2>
+            <div class="gr-sliders">
+              <label class="gr-slider"><span>Mood</span><anvil-component type="TextBox" name="s_mood"></anvil-component><anvil-component type="Label" name="o_mood" prop:role='["out"]'></anvil-component></label>
+              <label class="gr-slider"><span>Energy</span><anvil-component type="TextBox" name="s_energy"></anvil-component><anvil-component type="Label" name="o_energy" prop:role='["out"]'></anvil-component></label>
+              <label class="gr-slider"><span>Sleep</span><anvil-component type="TextBox" name="s_sleep"></anvil-component><anvil-component type="Label" name="o_sleep" prop:role='["out"]'></anvil-component></label>
+              <label class="gr-slider"><span>Stress</span><anvil-component type="TextBox" name="s_stress"></anvil-component><anvil-component type="Label" name="o_stress" prop:role='["out"]'></anvil-component></label>
+              <label class="gr-slider"><span>Focus</span><anvil-component type="TextBox" name="s_focus"></anvil-component><anvil-component type="Label" name="o_focus" prop:role='["out"]'></anvil-component></label>
+              <anvil-component type="TextBox" name="note_box" prop:placeholder="One line about today (optional)"></anvil-component>
+            </div>
+            <div class="ui-row gr-save"><anvil-component type="Button" name="save_button" prop:text="Save reading" prop:role='["btn", "btn-primary", "ic-save"]'></anvil-component><span class="small muted">Stress: 0 = calm, 10 = maxed out.</span></div>
+          </div>
+          <div class="ui-card gr-card gr-chart"><h2><i class="ic ic-sliders"></i>The last 30 days</h2><anvil-component type="Brain_Mechanic.Components.Chart" name="chart"></anvil-component>
+            <div class="gr-legend"><span><i class="k-mood"></i>Mood</span><span><i class="k-stress"></i>Stress</span><span><i class="k-sleep"></i>Sleep (hours, of 12)</span></div></div>
+          <div class="ui-card gr-card"><h2><i class="ic ic-scan"></i>Service history</h2>
+            <div class="gr-sample gr-import" anvil:name="import_box"><i class="ic ic-phone"></i><anvil-component type="Label" name="import_text" prop:role='["inline"]'></anvil-component><anvil-component type="Button" name="import_button" prop:text="Save them" prop:role='["btn", "btn-sm", "btn-primary"]'></anvil-component></div>
+            <anvil-component type="RepeatingPanel" name="scans_panel" prop:item_template="Brain_Mechanic.Items.Recent" prop:role='["gr-list"]'></anvil-component>
+            <div class="ui-empty gr-empty" anvil:name="no_scans"><i class="ic ic-scan"></i><p>No saved checks yet.</p><a class="ui-btn primary" href="#diagnose/scans">Run a check</a></div>
+          </div>
+        </div>
+        <div class="gr-col">
+          <div class="ui-card gr-card"><h2><i class="ic ic-wrench"></i>Repair plan</h2>
+            <anvil-component type="RepeatingPanel" name="plan_panel" prop:item_template="Brain_Mechanic.Items.PlanRow" prop:role='["gr-list"]'></anvil-component>
+            <div class="ui-empty gr-empty" anvil:name="no_plan"><i class="ic ic-wrench"></i><p>Add entries, patterns and tools with “Add to my repair plan”.</p><a class="ui-btn" href="#toolbox">Open the toolbox</a></div>
+          </div>
+          <div class="ui-card gr-card gr-j"><h2><i class="ic ic-clipboard"></i>Worksheets</h2>
+            <anvil-component type="RepeatingPanel" name="journal_panel" prop:item_template="Brain_Mechanic.Items.JournalRow" prop:role='["gr-list"]'></anvil-component>
+            <div class="ui-empty gr-empty" anvil:name="no_journal"><i class="ic ic-clipboard"></i><p>Thought records, safety plans and other worksheets you save show up here.</p><a class="ui-btn" href="#toolbox/thought_record">Try a thought record</a></div>
+          </div>
+          <div class="ui-card gr-card"><h2><i class="ic ic-lock"></i>Your data</h2><p class="muted small">Your logbook is yours. Download it any time, or wipe it clean (your account stays).</p>
+            <div class="ui-row"><anvil-component type="Button" name="export_button" prop:text="Download my logbook" prop:role='["btn", "ic-download"]'></anvil-component><anvil-component type="Button" name="wipe_button" prop:text="Delete everything" prop:role='["btn", "btn-danger", "ic-trash"]'></anvil-component></div></div>
+          <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

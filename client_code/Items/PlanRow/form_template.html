@@ -1,0 +1,13 @@
+<div class="gr-row">
+  <div class="grow">
+    <anvil-component type="Label" name="tag" prop:role='["bm-code"]' bind:text="self.item['tag']"></anvil-component>
+    <a anvil:name="title_link" href="#manual" class="gr-title"><anvil-component type="Label" name="title" prop:role='["strong"]' bind:text="self.item['title']"></anvil-component></a>
+    <anvil-component type="Label" name="note" prop:role='["fine-print", "gr-note"]' bind:text="self.item.get('note') or ''"></anvil-component>
+  </div>
+  <anvil-component type="Label" name="status_badge" prop:role='["bm-st"]'></anvil-component>
+  <div class="ui-row gr-ctl" anvil:name="controls">
+    <anvil-component type="DropDown" name="status_box"></anvil-component>
+    <anvil-component type="Button" name="note_button" prop:text="Add a note" prop:tooltip="Add a note" prop:role='["btn", "btn-sm", "btn-ghost", "btn-icon", "ic-edit"]'></anvil-component>
+    <anvil-component type="Button" name="remove_button" prop:text="Remove" prop:tooltip="Remove" prop:role='["btn", "btn-sm", "btn-ghost", "btn-icon", "ic-trash"]'></anvil-component>
+  </div>
+</div>

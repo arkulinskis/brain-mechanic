@@ -1,0 +1,21 @@
+---
+custom_component: true
+properties:
+  - name: tool_id
+    type: string
+    default_value: ""
+    description: The worksheet tool (w = sheet) whose fields to show
+toolbox_item:
+  title: Worksheet
+  group: Brain Mechanic
+---
+<div class="tb-sheet">
+  <h3>Worksheet</h3>
+  <anvil-component type="LinearPanel" name="fields_box" prop:role='["ws-fields"]'></anvil-component>
+  <div class="ui-row">
+    <anvil-component type="Button" name="save_button" prop:text="Save to my logbook" prop:role='["btn", "btn-primary", "ic-save"]'></anvil-component>
+    <anvil-component type="Button" name="download_button" prop:text="Download as text" prop:role='["btn", "ic-download"]'></anvil-component>
+    <anvil-component type="Button" name="clear_button" prop:text="Clear" prop:role='["btn", "btn-ghost"]'></anvil-component>
+  </div>
+  <anvil-component type="Label" name="privacy" prop:role='["fine-print"]'></anvil-component>
+</div>

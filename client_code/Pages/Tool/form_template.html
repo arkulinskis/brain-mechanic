@@ -1,0 +1,29 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <a class="bm-back" anvil:name="back_link" href="#toolbox"><i class="ic ic-back"></i><anvil-component type="Label" name="back_text"></anvil-component></a>
+      <div class="bm-art-head">
+        <div class="ui-row"><anvil-component type="Label" name="code" prop:role='["bm-code"]'></anvil-component><anvil-component type="Label" name="time" prop:role='["bm-st"]'></anvil-component></div>
+        <anvil-component type="Label" name="title" prop:role='["art-title"]'></anvil-component>
+        <anvil-component type="Label" name="line" prop:role='["art-line"]'></anvil-component>
+      </div>
+      <div class="bm-art">
+        <div>
+          <div class="tb-widget" anvil:name="widget_box"><anvil-component type="Brain_Mechanic.Components.Widget" name="widget"></anvil-component><anvil-component type="Brain_Mechanic.Components.Worksheet" name="sheet"></anvil-component>
+            <div anvil:name="garage_box"><h3>Your daily gauges</h3><p class="muted">Log five gauges in under a minute; your Garage draws the 30-day chart.</p><a class="ui-btn primary" href="#garage"><i class="ic ic-dash"></i>Open my garage</a></div>
+          </div>
+          <section class="bm-sec"><h2><i class="ic ic-wrench"></i>How to do it</h2><anvil-component type="RepeatingPanel" name="steps_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-steps"]'></anvil-component></section>
+          <section class="bm-sec"><h2><i class="ic ic-book"></i>Why it works</h2><anvil-component type="Label" name="why" prop:role='["sec-p"]'></anvil-component></section>
+          <section class="bm-sec" anvil:name="used_sec"><h2><i class="ic ic-book"></i>Used for</h2><anvil-component type="RepeatingPanel" name="used_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["bm-links"]'></anvil-component></section>
+          <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+        </div>
+        <aside class="bm-side">
+          <div class="ui-card"><h3 class="side-h">Keep it handy</h3><p class="muted small">Add it to your repair plan and mark how it works for you.</p>
+            <anvil-component type="Brain_Mechanic.Components.PlanButton" name="plan_button"></anvil-component></div>
+          <div class="ui-card"><h3 class="side-h">Not working?</h3><p class="muted small">Tools are a start, not a substitute for care. If things aren’t improving after a few weeks, a professional can help find what fits.</p>
+            <a href="#help">Find a pro <i class="ic ic-arrow"></i></a></div>
+        </aside>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

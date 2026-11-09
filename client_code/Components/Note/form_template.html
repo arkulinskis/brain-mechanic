@@ -1,0 +1,12 @@
+---
+custom_component: true
+properties:
+  - name: message
+    type: string
+    default_value: ""
+    description: "Other words for the note (empty = the standard 'Nobody here is a doctor' text)"
+toolbox_item:
+  title: Note
+  group: Brain Mechanic
+---
+<div class="bm-note"><i class="ic ic-info"></i><p><anvil-component type="Label" name="lead" prop:role='["note-lead"]'></anvil-component><anvil-component type="Label" name="body" prop:role='["note-body"]'></anvil-component></p></div>

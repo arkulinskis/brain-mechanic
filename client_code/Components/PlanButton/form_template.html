@@ -1,0 +1,16 @@
+---
+custom_component: true
+properties:
+  - name: plan_kind
+    type: string
+    default_value: ""
+    description: "condition, pattern or tool"
+  - name: plan_ref
+    type: string
+    default_value: ""
+    description: The id of the entry, pattern or tool
+toolbox_item:
+  title: Plan button
+  group: Brain Mechanic
+---
+<div class="plan-btn"><anvil-component type="Button" name="add_button" prop:text="Add to my repair plan" prop:role='["btn", "btn-brass", "ic-save"]'></anvil-component></div>

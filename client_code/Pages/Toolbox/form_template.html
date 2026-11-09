@@ -1,0 +1,12 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head"><div><h1>The toolbox: tools that actually help</h1>
+        <anvil-component type="Label" name="lead" prop:role='["lead-muted"]'></anvil-component></div></div>
+      <h2 class="tb-now-h">Need something right now?</h2>
+      <anvil-component type="RepeatingPanel" name="now_panel" prop:item_template="Brain_Mechanic.Items.BigLink" prop:role='["tb-now"]'></anvil-component>
+      <anvil-component type="RepeatingPanel" name="groups_panel" prop:item_template="Brain_Mechanic.Items.Group" prop:role='["tb-groups"]'></anvil-component>
+      <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

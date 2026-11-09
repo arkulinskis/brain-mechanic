@@ -1,0 +1,66 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap sc-wrap">
+      <a class="bm-back" href="#diagnose/scans"><i class="ic ic-back"></i>All checks</a>
+      <div class="ui-empty" anvil:name="missing"><i class="ic ic-scan"></i><h3>That check isn’t in the shop</h3><p>It may have been renamed.</p><a class="ui-btn primary" href="#diagnose/scans">See all checks</a></div>
+
+      <div anvil:name="form_part">
+        <div class="sc-head">
+          <div class="sc-meta"><anvil-component type="Label" name="kind" prop:role='["bm-st"]'></anvil-component><anvil-component type="Label" name="time" prop:role='["bm-st"]'></anvil-component><anvil-component type="Label" name="qcount" prop:role='["bm-st"]'></anvil-component></div>
+          <anvil-component type="Label" name="title" prop:role='["art-title"]'></anvil-component>
+        </div>
+        <div class="sc-fuel"><div class="row"><span>FUEL</span><anvil-component type="Label" name="fuel_count" prop:role='["inline"]'></anvil-component></div><div class="bm-meter"><span anvil:name="fuel_fill"></span></div></div>
+        <fieldset class="sc-q" anvil:name="gate_box"><legend><span class="n">START</span><anvil-component type="Label" name="gate_q" prop:role='["sc-qtext"]'></anvil-component></legend>
+          <div class="sc-opts">
+            <anvil-component type="RadioButton" name="gate_yes" prop:text="Yes" prop:value="1" prop:group_name="gate" prop:role='["sc-opt"]'></anvil-component>
+            <anvil-component type="RadioButton" name="gate_no" prop:text="No" prop:value="0" prop:group_name="gate" prop:role='["sc-opt"]'></anvil-component>
+          </div></fieldset>
+        <div anvil:name="items_box">
+          <anvil-component type="Label" name="intro" prop:role='["sc-intro"]'></anvil-component>
+          <anvil-component type="RepeatingPanel" name="q_panel" prop:item_template="Brain_Mechanic.Items.Question" prop:role='["sc-list"]'></anvil-component>
+          <p class="small muted sc-shade-note" anvil:name="shade_note"><span class="sc-swatch"></span>Shaded answers are the ones the screener counts. Four or more is a positive screen.</p>
+        </div>
+        <div class="sc-ack"><anvil-component type="CheckBox" name="ack" prop:text="I understand this is a self-check for fun and reflection, not a diagnosis or medical advice."></anvil-component></div>
+        <div class="ui-row"><anvil-component type="Button" name="run_button" prop:text="Run the scan" prop:role='["btn", "btn-primary", "btn-lg", "ic-scan"]'></anvil-component><anvil-component type="Label" name="hint" prop:role='["fine-print", "sc-hint"]'></anvil-component></div>
+        <anvil-component type="Label" name="source" prop:role='["sc-src"]'></anvil-component>
+      </div>
+
+      <div anvil:name="result_part">
+        <div class="sc-res">
+          <div><anvil-component type="Brain_Mechanic.Components.Gauge" name="gauge"></anvil-component></div>
+          <div>
+            <anvil-component type="Label" name="level" prop:role='["bm-level"]'></anvil-component>
+            <anvil-component type="Label" name="r_title" prop:role='["sc-r-title"]'></anvil-component>
+            <anvil-component type="Label" name="r_text" prop:role='["sec-p"]'></anvil-component>
+            <anvil-component type="Label" name="r_note" prop:role='["fine-print"]'></anvil-component>
+            <div class="sc-acts">
+              <anvil-component type="Button" name="save_button" prop:text="Save to my logbook" prop:role='["btn", "btn-primary", "ic-save"]'></anvil-component>
+              <anvil-component type="Button" name="save_guest_button" prop:text="Keep it in a logbook" prop:role='["btn", "btn-primary", "ic-save"]'></anvil-component>
+              <a class="ui-btn" href="#workorder"><i class="ic ic-clipboard"></i>Work order for a pro</a>
+              <anvil-component type="Button" name="again_button" prop:text="Retake" prop:role='["btn", "btn-ghost", "ic-refresh"]'></anvil-component>
+            </div>
+          </div>
+        </div>
+        <div class="bm-see sc-flag" anvil:name="flag_crisis"><h3><i class="ic ic-brake"></i>One answer matters more than the score</h3><p>You mentioned thoughts of death or hurting yourself. Please talk to someone today: a crisis line, your doctor, or someone you trust. You deserve support right now.</p><button type="button" class="bm-brake" anvil:on-dom:click="self.brake_click"><i class="ic ic-brake"></i>Open the emergency brake</button></div>
+        <div class="bm-see sc-flag" anvil:name="flag_abuse"><h3><i class="ic ic-shield"></i>Your safety comes first</h3><p>Fear, threats and coercion are signs of abuse. Domestic abuse services help with safety planning, whether or not you want to leave: US <a href="tel:18007997233">1-800-799-7233</a> · UK <a href="tel:08082000247">0808 2000 247</a> · Canada <a href="https://sheltersafe.ca" target="_blank" rel="noopener">sheltersafe.ca</a>. In danger, call your emergency number.</p></div>
+        <div class="bm-see sc-flag" anvil:name="flag_doctor"><h3><i class="ic ic-info"></i>Please see a doctor about this</h3><p>Some of your answers (purging or strong restriction) can affect your physical health. A doctor can check you safely and help, without judgement.</p></div>
+        <div class="sc-block" anvil:name="dials"><h2>Your two attachment dials</h2>
+          <div class="ui-row top sc-dials">
+            <div class="sc-quad"><div>Anxious</div><div>Fearful-avoidant</div><div>Secure</div><div>Avoidant</div><span class="dot" anvil:name="dot"></span></div>
+            <div class="sc-sub">
+              <div class="row"><span class="sc-axis">ANXIETY</span><div class="bm-meter"><span anvil:name="anx_fill"></span></div><anvil-component type="Label" name="anx_pct" prop:role='["strong"]'></anvil-component></div>
+              <div class="row"><span class="sc-axis">AVOIDANCE</span><div class="bm-meter"><span anvil:name="avo_fill"></span></div><anvil-component type="Label" name="avo_pct" prop:role='["strong"]'></anvil-component></div>
+              <p class="small muted">Up = more anxiety about closeness. Right = more avoidance of closeness. Read about <a href="#manual/anxattach">anxious</a> and <a href="#manual/avoidattach">avoidant</a> attachment.</p>
+            </div>
+          </div>
+        </div>
+        <div class="sc-block" anvil:name="top_sec"><h2>Your factory settings</h2><anvil-component type="RepeatingPanel" name="top_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></div>
+        <div class="sc-block" anvil:name="bay"><div class="sc-bay"><div><h3>The ADHD Pit Lane</h3><p>Relief tools, what really helps (and what doesn’t), daily systems and how to get assessed, all in one bay.</p></div>
+          <a class="ui-btn primary" href="#adhd"><i class="ic ic-steer"></i>Open the Pit Lane</a></div></div>
+        <div class="sc-block" anvil:name="cond_sec"><h2>What this lights up in the manual</h2><anvil-component type="RepeatingPanel" name="cond_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></div>
+        <div class="sc-block" anvil:name="tools_sec"><h2>Tools to try first</h2><anvil-component type="RepeatingPanel" name="tools_panel" prop:item_template="Brain_Mechanic.Items.Card" prop:role='["bm-cards"]'></anvil-component></div>
+        <div class="sc-block"><anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component></div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>
