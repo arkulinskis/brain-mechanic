@@ -13,7 +13,7 @@ class Tile(TileTemplate):
         i = self.item
         for c in (i.get("cls") or "").split():
             self.classes[c] = True
-        self.tag.visible = bool(i.get("tag"))
+        self.tag_label.visible = bool(i.get("tag"))
         self.badge.visible = bool(i.get("badge"))
         self.badge.role = [r for r in ("bm-st", i.get("badge_cls")) if r]
         self.icon.visible = bool(i.get("icon"))

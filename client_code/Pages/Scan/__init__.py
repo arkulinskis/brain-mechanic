@@ -58,7 +58,7 @@ class Scan(ScanTemplate):
         self.questions[i] = q
 
     def answer(self, i, value):
-        self.answers[i] = value
+        self.answers[i] = float(value) if "." in str(value) else int(value)  # RadioButton values come back as text
         self.questions[i].mark(done=True, miss=False)
         self._fuel()
 

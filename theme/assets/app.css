@@ -1274,6 +1274,7 @@ ol.bm-steps li::before { content: counter(st); position: absolute; left: 0; top:
 .ui-tabbar button.more.on { color: var(--c-brand); }
 .ui-tabbar .bm-sheet .ui-seg button { flex: 1; }
 @media (min-width: 721px) { .ui-tabbar { display: none !important; } }
+:is(.anvil-role-bm-list, .anvil-role-bm-steps, .anvil-role-mn-lights, .anvil-role-wo-list) > div > * { margin: 0 !important; padding: 0; }
 
 /* =====================================================================================================
    Anvil components: the same look through roles (prop:role='["btn", "btn-primary", "ic-wand"]').

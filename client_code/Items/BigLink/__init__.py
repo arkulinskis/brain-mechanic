@@ -20,5 +20,5 @@ class BigLink(BigLinkTemplate):
         self.icon.visible = bool(i.get("icon"))
         if i.get("icon"):
             self.icon.classes.add("ic-" + i["icon"])
-        self.tag.visible = bool(i.get("tag"))
+        self.tag_label.visible = bool(i.get("tag"))
         self.sub.visible = bool(i.get("sub"))
