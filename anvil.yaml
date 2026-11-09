@@ -407,8 +407,8 @@ native_deps:
     \ mind: look up ADHD, anxiety, narcissism and upbringing patterns, run free self-checks and find tools. Not medical advice.\"\
     , \"image\": \"https://brain-mechanic.anvil.app/_/theme/og-image.png\", \"serviceType\": \"Pull up a chair. Let's look\
     \ under the hood.\", \"provider\": {\"@id\": \"https://arkvital.com/#org\"}, \"areaServed\": \"Worldwide\", \"availableChannel\"\
-    : {\"@type\": \"ServiceChannel\", \"serviceUrl\": \"https://brain-mechanic.anvil.app/\", \"name\": \"Web browser\"}, \"\
-    availableLanguage\": \"en\", \"offers\": {\"@type\": \"Offer\", \"price\": \"0\", \"priceCurrency\": \"CAD\"}, \"audience\"\
+    : {\"@type\": \"ServiceChannel\", \"serviceUrl\": \"https://brain-mechanic.anvil.app/\", \"name\": \"Web browser\", \"\
+    availableLanguage\": \"en\"}, \"offers\": {\"@type\": \"Offer\", \"price\": \"0\", \"priceCurrency\": \"CAD\"}, \"audience\"\
     : {\"@type\": \"Audience\", \"audienceType\": \"Adults curious about their own mind who want to understand a pattern before\
     \ deciding whether to see a professional\"}}, {\"@type\": \"WebSite\", \"@id\": \"https://brain-mechanic.anvil.app/#site\"\
     , \"url\": \"https://brain-mechanic.anvil.app/\", \"name\": \"Brain Mechanic\", \"publisher\": {\"@id\": \"https://arkvital.com/#org\"\
