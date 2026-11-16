@@ -75,7 +75,7 @@ it's for fun and self-reflection, never medical advice**, and the app says so on
 history (saved checks; move results from this device in one click), the repair plan (status + notes), saved
 worksheets, Download my logbook (JSON) and Delete everything. A new logbook shows sample readings until the first entry.
 
-**For admins** (`#admin`; arkulinskis@gmail.com becomes an admin on first sign-in):
+**For admins** (`#admin`; your admin email (App Secret `admin_emails`) becomes an admin on first sign-in):
 - **Overview:** members, saved results, readings, plan items, worksheets (counts only; never anyone's contents).
 - **Usage:** how often each check is run (anonymous monthly tallies), how many were saved, demo tallies.
 - **Feedback inbox** (older messages), **Users** (make admin, disable), **Demo data** (three demo members with
@@ -86,7 +86,7 @@ worksheets, Download my logbook (JSON) and Delete everything. A new logbook show
 1. In the Anvil editor: **Create app → Clone from GitHub**, and paste `https://github.com/arkulinskis/brain-mechanic`.
 2. **Users** service: email + password and "Continue with Google", sign-up allowed (already set in `anvil.yaml`; check it).
 3. Open the app in the editor. If it shows a **Schema Mismatch** alert, choose **"The schema of the source code is correct"** so Anvil creates the tables.
-4. **Run** it and sign up with **arkulinskis@gmail.com** straight away (that account becomes the admin).
+4. **Run** it and sign up with **your admin email** (App Secret `admin_emails`) straight away (that account becomes the admin).
 5. **Publish** (Publish → public URL, or your own domain).
 
 <!-- libraries:start -->
