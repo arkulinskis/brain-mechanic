@@ -190,9 +190,7 @@ def delete_scan(scan_row_id):
     return C.ok()
 
 
-@anvil.server.callable(require_user=True)
-def plan_add(kind, ref):
-    me = C.require_user()
+def _plan_add(me, kind, ref):
     if kind not in PLAN_KINDS or not isinstance(ref, str) or not SLUG.match(ref):
         return C.fail("That can’t go in the repair plan.")
     r = app_tables.plan.get(user=me, kind=kind, ref=ref)
@@ -202,6 +200,29 @@ def plan_add(kind, ref):
         return C.fail("Your repair plan is full (200 items). Remove a few first.")
     r = app_tables.plan.add_row(user=me, kind=kind, ref=ref, status="want", note="", created=C.now(), updated=C.now(), is_demo=False)
     return C.ok(item=plan_dict(r), existed=False)
+
+
+@anvil.server.callable(require_user=True)
+def plan_add(kind, ref):
+    return _plan_add(C.require_user(), kind, ref)
+
+
+@anvil.server.callable(require_user=True)
+def plan_add_many(kind, refs):
+    """Several items at once (the waiting-room route's tools). Items already in the plan are left as they are."""
+    me = C.require_user()
+    if not isinstance(refs, (list, tuple)) or not refs:
+        return C.fail("Nothing to add.")
+    added = existed = 0
+    for ref in list(refs)[:20]:
+        r = _plan_add(me, kind, ref)
+        if not r.get("ok"):
+            return C.fail(r.get("error")) if not (added or existed) else C.ok(added=added, existed=existed, stopped=r.get("error"))
+        if r.get("existed"):
+            existed += 1
+        else:
+            added += 1
+    return C.ok(added=added, existed=existed)
 
 
 @anvil.server.callable(require_user=True)
@@ -251,6 +272,16 @@ def journal_add(tool, data):
         return C.fail("That’s a lot of worksheets in an hour. Try again later.")
     r = app_tables.journal.add_row(user=me, tool=tool, data=clean, created=C.now(), is_demo=False)
     return C.ok(entry=journal_dict(r))
+
+
+@anvil.server.callable(require_user=True)
+def get_safety_plan():
+    """The signed-in member's newest saved safety plan, for the Emergency brake (never anyone else's), or None."""
+    me = C.require_user()
+    for r in app_tables.journal.search(tables.order_by("created", ascending=False), user=me, tool="safety_plan"):
+        if not r["is_demo"]:
+            return C.ok(plan=journal_dict(r))
+    return C.ok(plan=None)
 
 
 @anvil.server.callable(require_user=True)

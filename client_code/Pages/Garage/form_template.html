@@ -36,6 +36,11 @@
             <anvil-component type="RepeatingPanel" name="scans_panel" prop:item_template="Brain_Mechanic.Items.Recent" prop:role='["gr-list"]'></anvil-component>
             <div class="ui-empty gr-empty" anvil:name="no_scans"><i class="ic ic-scan"></i><p>No saved checks yet.</p><a class="ui-btn primary" href="#diagnose/scans">Run a check</a></div>
           </div>
+          <div class="ui-card gr-card"><h2><i class="ic ic-dash"></i>Mileage</h2>
+            <p class="muted small">Checks you’ve run more than once, first to latest, and when each is due again. A score change isn’t a diagnosis; show the trend to your clinician.</p>
+            <anvil-component type="RepeatingPanel" name="mileage_panel" prop:item_template="Brain_Mechanic.Items.MileageRow" prop:role='["gr-list"]'></anvil-component>
+            <div class="ui-empty gr-empty" anvil:name="no_mileage"><i class="ic ic-dash"></i><p>Run a check twice and its mileage shows here. The mood and anxiety checks are worth repeating every two weeks.</p><a class="ui-btn" href="#waiting">Follow the waiting-room route</a></div>
+          </div>
         </div>
         <div class="gr-col">
           <div class="ui-card gr-card"><h2><i class="ic ic-wrench"></i>Repair plan</h2>

@@ -18,6 +18,15 @@ class Checks(ChecksTemplate):
         self.recent_panel.items = [{"id": r.get("id"), "level": r.get("level", 0), "label": r.get("label", ""), "title": b[r["scan_id"]]["n"],
                                     "scan_id": r["scan_id"], "sub": "%s · score %s of %s" % (state.ago(r.get("taken")), r.get("score"), r.get("max"))}
                                    for r in local]
+        rc = []
+        for sid, runs in bm.by_scan(bm.merge_results(bm.local_results())).items():
+            m = bm.mileage(runs) if sid in b else None
+            if m and m["days"] > 0:
+                rc.append({"href": "#scan/" + sid, "code": "Due now" if m["due"] else "in " + state.plural(m["due_in"], "day"), "text": b[sid]["n"], "icon": "",
+                           "_k": -1 if m["due"] else m["due_in"]})
+        rc.sort(key=lambda c: c["_k"])
+        self.recheck_box.visible = bool(rc)
+        self.recheck_panel.items = rc
         kinds = [("Published screeners", "Short questionnaires that doctors use, reproduced word for word with their official scoring. Still not a diagnosis: a high score means “get a proper check”.", ("validated",)),
                  ("Pattern checks", "Our own plain-language checks, written from the diagnostic criteria and research. Useful for reflection; not validated tests.", ("pattern",)),
                  ("Childhood", "What your upbringing may have installed.", ("aces", "factory"))]

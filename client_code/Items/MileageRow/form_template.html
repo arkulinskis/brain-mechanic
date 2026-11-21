@@ -1,0 +1,9 @@
+<div class="ml-row">
+  <div class="ml-main">
+    <anvil-component type="Label" name="title" prop:role='["strong"]' bind:text="self.item['title']"></anvil-component>
+    <anvil-component type="Label" name="line" prop:role='["fine-print"]' bind:text="self.item['line']"></anvil-component>
+    <anvil-component type="Label" name="due" prop:role='["bm-st"]'></anvil-component>
+  </div>
+  <anvil-component type="Brain_Mechanic.Components.Spark" name="spark"></anvil-component>
+  <a class="ui-btn sm" anvil:name="recheck" href="#diagnose/scans"><i class="ic ic-refresh"></i>Re-check</a>
+</div>

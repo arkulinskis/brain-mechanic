@@ -1252,13 +1252,13 @@
 
   BM.SCANS = [
     // ------------------------------------------------------------------------------ validated screeners
-    { id: 'phq9', n: 'Mood check (PHQ-9)', kind: 'validated', cond: 'depression', time: '2 min',
+    { id: 'phq9', n: 'Mood check (PHQ-9)', kind: 'validated', cond: 'depression', time: '2 min', recheck: 14,
       source: 'Patient Health Questionnaire-9, developed by Drs Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce.',
       intro: 'Over the last 2 weeks, how often have you been bothered by any of the following problems?', opts: TWO_WEEKS, crisisItem: 8,
       items: ['Little interest or pleasure in doing things', 'Feeling down, depressed, or hopeless', 'Trouble falling or staying asleep, or sleeping too much', 'Feeling tired or having little energy', 'Poor appetite or overeating', 'Feeling bad about yourself, or that you are a failure or have let yourself or your family down', 'Trouble concentrating on things, such as reading the newspaper or watching television', 'Moving or speaking so slowly that other people could have noticed. Or the opposite: being so fidgety or restless that you have been moving around a lot more than usual', 'Thoughts that you would be better off dead, or of hurting yourself in some way'],
       bands: [{ max: 4, level: 0, label: 'Minimal', text: 'Scores of 0–4 suggest minimal depressive symptoms.' }, { max: 9, level: 1, label: 'Mild', text: 'Scores of 5–9 suggest mild symptoms. Keep an eye on it and look after the basics.' }, { max: 14, level: 2, label: 'Moderate', text: 'Scores of 10–14 suggest moderate symptoms. 10 is the score where clinicians usually suggest an assessment.' }, { max: 19, level: 3, label: 'Moderately severe', text: 'Scores of 15–19 suggest moderately severe symptoms. Please talk to a doctor or therapist.' }, { max: 27, level: 3, label: 'Severe', text: 'Scores of 20–27 suggest severe symptoms. Please see a doctor soon.' }],
       next: ['behav_activation', 'movement', 'social_dose'] },
-    { id: 'gad7', n: 'Anxiety check (GAD-7)', kind: 'validated', cond: 'gad', time: '2 min',
+    { id: 'gad7', n: 'Anxiety check (GAD-7)', kind: 'validated', cond: 'gad', time: '2 min', recheck: 14,
       source: 'Generalized Anxiety Disorder-7, developed by Drs Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce.',
       intro: 'Over the last 2 weeks, how often have you been bothered by the following problems?', opts: TWO_WEEKS,
       items: ['Feeling nervous, anxious, or on edge', 'Not being able to stop or control worrying', 'Worrying too much about different things', 'Trouble relaxing', 'Being so restless that it is hard to sit still', 'Becoming easily annoyed or irritable', 'Feeling afraid, as if something awful might happen'],
@@ -1406,14 +1406,14 @@
       next: ['expressive_writing', 'social_dose', 'self_compassion'] },
 
     // ------------------------------------------------------------------------------ childhood
-    { id: 'aces', n: 'Childhood adversity count (ACEs)', kind: 'aces', cond: 'cptsd', time: '2 min', opts: YESNO,
+    { id: 'aces', n: 'Childhood adversity count (ACEs)', kind: 'aces', cond: 'cptsd', time: '2 min', recheck: 0, opts: YESNO,
       source: 'The 10 Adverse Childhood Experiences from the CDC–Kaiser Permanente ACE Study (Felitti et al., 1998), in plain words.',
       intro: 'Before you turned 18…',
       items: ['did a parent or adult at home often swear at you, insult you, put you down or make you afraid you’d be hurt?', 'did a parent or adult at home often push, grab, slap or hit you, or hurt you so badly you had marks or injuries?', 'did an adult or someone at least 5 years older ever touch you sexually or try to make you touch them, or attempt sex?', 'did you often feel nobody in your family loved you or thought you were special, or that your family didn’t look out for each other?', 'did you often not have enough to eat, wear dirty clothes or have no one to protect you, or were your parents too drunk or high to take care of you?', 'were your parents ever separated or divorced?', 'was your mother or stepmother often pushed, grabbed, slapped, hit or threatened?', 'did you live with anyone who had a problem with drinking or used street drugs?', 'was a household member depressed, mentally ill, or did anyone attempt suicide?', 'did a household member go to prison?'],
       bands: [{ max: 0, level: 0, label: '0 ACEs', text: 'None of the 10 listed experiences. Other hard things can still matter: see the Factory Settings check.' }, { max: 3, level: 1, label: '1–3 ACEs', text: 'About two-thirds of adults in the original study had at least one. Each adds some risk; support and good relationships lower it.' }, { max: 10, level: 3, label: '4 or more ACEs', text: 'In the original study, 4 or more ACEs were linked to much higher risk of depression, addiction and physical illness. That’s a population average, not your fate: protective relationships and therapy make a big difference.' }],
       note: 'ACE scores are a research tool for populations, not a prediction for one person. Positive childhood experiences (at least one adult who cared, belonging at school) protect too (Bethell et al., 2019).',
       next: ['reparent', 'self_compassion', 'expressive_writing'] },
-    { id: 'factory', n: 'Factory Settings check', kind: 'factory', cond: 'cen', time: '5 min',
+    { id: 'factory', n: 'Factory Settings check', kind: 'factory', cond: 'cen', time: '5 min', recheck: 0,
       intro: 'Growing up, how true was this of your family? Answer for the adults who raised you. There are no wrong answers, and this isn’t about blame.',
       opts: [['Not at all', 0], ['A bit', 1], ['Clearly', 2]],
       next: ['reparent', 'self_compassion', 'boundary_script'] }
@@ -1421,6 +1421,59 @@
 
   BM.scanById = {};
   BM.SCANS.forEach(function (s) { BM.scanById[s.id] = s; });
+
+  /* Re-check rhythm (Mileage log): days between runs of a check. PHQ-9 and GAD-7 ask about the last two weeks, so
+     14 days; childhood checks (recheck: 0 on the scan) describe the past and never fall due; everything else 30. */
+  BM.RECHECK_DEFAULT = 30;
+
+  /* ---- The waiting-room route (#waiting): four weeks of steps while you wait for care.
+     step: { kind, id, line }  kind = brake | tool | glovebox | scan | recheck | workorder | link | tip
+     scan/recheck/tool ids must exist in BM.SCANS / BM.TOOLS (tools/check.py doesn't know: keep them real). */
+  BM.WAIT = {
+    sources: [
+      ['Mind: how to cope on a waiting list for therapy', 'https://www.mind.org.uk/information-support/drugs-and-treatments/talking-therapy-and-counselling/how-to-cope-on-a-waiting-list-for-therapy/'],
+      ['JED Foundation: 8 ways to take care of yourself while you wait for care', 'https://jedfoundation.org/resource/8-ways-to-take-care-of-yourself-when-youre-waiting-for-mental-health-care/']
+    ],
+    weeks: [
+      { n: 0, title: 'Before anything else: know where the brake is',
+        why: 'Things can change while you wait. The JED Foundation’s first two tips for the wait are exactly these: know what to do if you need help right away, and write a safety plan with coping strategies and people you can turn to. If you need help sooner, don’t wait for the appointment.',
+        steps: [
+          { kind: 'brake', line: 'Open the Emergency brake once now, so you know where the crisis lines are. It sits at the top of every page.' },
+          { kind: 'tool', id: 'safety_plan', line: 'Write a safety plan on a calm day: warning signs, things that help, people to call.' },
+          { kind: 'glovebox', line: 'Turn your plan into a Glovebox card: a picture for your lock screen, made on your phone.' }
+        ] },
+      { n: 1, title: 'Week 1: take a baseline',
+        why: 'A starting score lets you, and later your clinician, see whether things are moving. Jotting down how you feel each day also gives you something concrete to bring to the first appointment.',
+        steps: [
+          { kind: 'scan', id: 'phq9', line: 'Two minutes. Your starting point for mood.' },
+          { kind: 'scan', id: 'gad7', line: 'Two minutes. Your starting point for worry and tension.' },
+          { kind: 'tool', id: 'gauge_log', line: 'Log five gauges once a day. Under a minute.' }
+        ] },
+      { n: 2, title: 'Week 2: small moves that lift mood and worry',
+        why: 'The JED Foundation suggests learning and practising coping skills while you wait. These three come from well-researched therapies: behavioural activation, a CBT worry technique and slow breathing.',
+        steps: [
+          { kind: 'tool', id: 'behav_activation', line: 'Plan one small thing a day that brings pleasure or a sense of achievement.' },
+          { kind: 'tool', id: 'worry_time', line: 'Give worries a fixed 15-minute slot instead of the whole day.' },
+          { kind: 'tool', id: 'breath_slow', line: 'Three to five minutes of slow breathing when tension builds.' }
+        ] },
+      { n: 3, title: 'Week 3: sleep, movement, people',
+        why: 'A regular sleep schedule, exercise and time with people are what the JED Foundation calls putting your health first. They won’t replace treatment, and they can make the wait easier.',
+        steps: [
+          { kind: 'tool', id: 'sleep_window', line: 'Fix your wake-up time and protect a steady sleep window.' },
+          { kind: 'tool', id: 'movement', line: 'Ten minutes of movement. A walk counts.' },
+          { kind: 'tool', id: 'social_dose', line: 'One small dose of people a day: a message, a call, a coffee.' }
+        ] },
+      { n: 4, title: 'Week 4: re-check and get ready for the appointment',
+        why: 'A second score shows the direction of travel, which is useful to bring along (a score change isn’t a diagnosis). It’s also worth asking the service whether it keeps a cancellation list, and telling them if things have got worse.',
+        steps: [
+          { kind: 'recheck', id: 'phq9', line: 'Run the mood check again. The Mileage log shows the change.' },
+          { kind: 'recheck', id: 'gad7', line: 'Run the anxiety check again.' },
+          { kind: 'workorder', line: 'Build a one-page work order with your scores and your own words.' },
+          { kind: 'link', id: 'help', line: 'Pick the questions you want to ask, from the list on Find a pro.' },
+          { kind: 'tip', line: 'Call the service: ask whether there’s a cancellation list, and tell them if things have got worse since you were referred.' }
+        ] }
+    ]
+  };
 })();
 
 /* ---- from bmd_tools */

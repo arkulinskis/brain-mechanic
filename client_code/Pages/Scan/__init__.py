@@ -151,6 +151,44 @@ class Scan(ScanTemplate):
         tools = bm.cards("tools", s.get("next"))
         self.tools_sec.visible = bool(tools)
         self.tools_panel.items = tools
+        self.wait_sec.visible = (r.get("level") or 0) >= 2 and k in ("validated", "pattern")
+        self.server_scans = []
+        self._mileage()
+        if state.me():
+            self.mileage_timer.interval = 0.2  # add logbook results from other devices, after the result shows
+
+    def _mileage(self):
+        """Mileage log: this check's earlier results (this browser + the logbook) next to today's."""
+        s, r = self.scan, self.result
+        rows = bm.history(s["id"], self.server_scans)
+        m = bm.mileage(rows)
+        days = bm.recheck_days(s["id"])
+        self.mileage_sec.visible = bool(m) and (m["count"] > 1 or days > 0)
+        if not self.mileage_sec.visible:
+            return
+        if m["count"] > 1:
+            self.mileage_line.text = bm.change_text(m)
+            self.spark.visible = True
+            self.spark.draw(points=m["points"], label=bm.spark_label(s["n"], m))
+        else:
+            self.mileage_line.text = "First reading on this device: %s. Run it again later to see the trend." % bm.score_text(r)
+            self.spark.visible = False
+        if days > 0:
+            why = " (it asks about the last two weeks)" if days == 14 else ""
+            self.recheck_line.text = "Next re-check: in %s, around %s%s." % (state.plural(days, "day"), bm.fmt_date(m["next_date"]), why)
+        else:
+            self.recheck_line.text = "This check is about the past, so there’s no need to re-run it."
+
+    @handle("mileage_timer", "tick")
+    def mileage_timer_tick(self, **event_args):
+        self.mileage_timer.interval = 0
+        try:
+            d = anvil.server.call_s("get_garage")
+        except Exception:
+            return
+        if isinstance(d, dict) and d.get("scans") and self.result_part.visible:
+            self.server_scans = d["scans"]
+            self._mileage()
 
     @handle("save_button", "click")
     def save_button_click(self, **event_args):

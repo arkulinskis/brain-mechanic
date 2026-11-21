@@ -738,7 +738,7 @@
     conditions: ['id', 'code', 'n', 'sys', 'st', 'line', 'scan', 'tools', 'lights', 'aka'],
     patterns: ['id', 'n', 'grp', 'voice', 'tools', 'conds', 'q', 'aka'],
     tools: ['id', 'n', 'cat', 'time', 'w', 'line', 'ic', 'fields'],
-    scans: ['id', 'n', 'kind', 'time', 'cond', 'bay']
+    scans: ['id', 'n', 'kind', 'time', 'cond', 'bay', 'recheck']
   };
   BM.json = {
     /* the small tables + counts */
@@ -754,6 +754,7 @@
       return JSON.stringify(by[id] || null);
     },
     adhd: function () { return JSON.stringify(BM.ADHD); },
+    wait: function () { return JSON.stringify(BM.WAIT || { weeks: [], sources: [] }); },
     search: function (q) { return JSON.stringify(BM.search(q).map(function (r) { return { type: r.type, id: r.id, score: r.score }; })); },
     rank: function (onJson) { return JSON.stringify(BM.rankLights(JSON.parse(onJson)).map(function (r) { return { id: r.c.id, hits: r.hits, of: r.of }; })); },
     items: function (scanId) {
@@ -776,6 +777,171 @@
     else if (w.indexOf('timer:') === 0) timerWidget(box, +w.split(':')[1], w.split(':')[2] || 'Timer');
     else if (w.indexOf('adhd:') === 0 && W[w.slice(5)]) W[w.slice(5)](box, t);
   };
+  /* ---------------------------------------------------------------- Mileage log: a tiny score sparkline */
+  /* o: {points: [{v, max, date}], label}. Higher on the line = higher score (more of what the check asks about). */
+  BM.sparkSvg = function (o) {
+    var pts = (o && o.points) || [], w = 240, h = 56, pad = 7;
+    if (!pts.length) return '';
+    var n = pts.length;
+    var xy = pts.map(function (p, i) {
+      var f = p.max ? Math.max(0, Math.min(1, p.v / p.max)) : 0;
+      return [n === 1 ? w / 2 : pad + (w - 2 * pad) * i / (n - 1), h - pad - (h - 2 * pad) * f];
+    });
+    var line = xy.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ');
+    var dots = xy.map(function (q, i) {
+      var last = i === n - 1;
+      return '<circle cx="' + q[0].toFixed(1) + '" cy="' + q[1].toFixed(1) + '" r="' + (last ? 5 : 3.2) + '" fill="' + (last ? 'var(--c-brand)' : 'var(--c-accent)') +
+        '" stroke="var(--c-surface)" stroke-width="1.5"><title>' + esc(pts[i].date + ': ' + pts[i].v + ' of ' + pts[i].max) + '</title></circle>';
+    }).join('');
+    return '<svg class="bm-spark-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(o.label || 'Scores over time') + '">' +
+      '<line x1="' + pad + '" x2="' + (w - pad) + '" y1="' + (h - pad) + '" y2="' + (h - pad) + '" stroke="var(--c-line)" stroke-dasharray="3 4"/>' +
+      (n > 1 ? '<polyline points="' + line + '" fill="none" stroke="var(--c-accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' : '') +
+      dots + '</svg>';
+  };
+  BM.spark = function (json) { return BM.sparkSvg(JSON.parse(json)); };
+
+  /* ---------------------------------------------------------------- crisis lines: the visitor's region first */
+  /* From the browser's time zone only (nothing is looked up or sent). Codes match data-region on CrisisBox lines. */
+  var CA_TZ = /^America\/(Toronto|Montreal|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Swift_Current|Moncton|Glace_Bay|Goose_Bay|Whitehorse|Dawson|Dawson_Creek|Yellowknife|Iqaluit|Inuvik|Rankin_Inlet|Resolute|Cambridge_Bay|Atikokan|Blanc-Sablon|Creston|Fort_Nelson|Nipigon|Thunder_Bay|Rainy_River|Pangnirtung)$/;
+  var US_TZ = /^(America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Juneau|Sitka|Nome|Yakutat|Metlakatla|Adak|Boise|Detroit|Menominee|Indiana\/.+|Kentucky\/.+|North_Dakota\/.+)|Pacific\/Honolulu|US\/.+)$/;
+  BM.region = function () {
+    var tz = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    if (CA_TZ.test(tz) || /^Canada\//.test(tz)) return 'ca';
+    if (US_TZ.test(tz)) return 'us';
+    if (/^Europe\/(London|Dublin|Belfast|Guernsey|Jersey|Isle_of_Man)$/.test(tz)) return 'uk';
+    if (/^Australia\//.test(tz)) return 'au';
+    if (/^(Pacific\/(Auckland|Chatham)|NZ)/.test(tz)) return 'nz';
+    if (tz === 'Europe/Paris') return 'fr';
+    return 'any';
+  };
+  /* Move the line for the visitor's region to the top of root's .bm-lines and mark it. Returns the region code. */
+  BM.regionFirst = function (root) {
+    var r = BM.region();
+    try {
+      var list = root.querySelector('.bm-lines'), el = list && list.querySelector('[data-region="' + r + '"]');
+      if (el) {
+        if (el !== list.firstElementChild) list.insertBefore(el, list.firstElementChild);
+        el.classList.add('here');
+      }
+    } catch (e) {}
+    return r;
+  };
+
+  /* ---------------------------------------------------------------- the Glovebox card (safety plan as a lock-screen PNG) */
+  /* Drawn on a canvas in this browser and downloaded; nothing is sent anywhere.
+     title: heading; rowsJson: [[label, text], ...]; footer: [big line, small line]. Resolves true when downloaded. */
+  BM.gloveboxCard = function (title, rowsJson, footerJson) {
+    var rows = JSON.parse(rowsJson || '[]'), footer = JSON.parse(footerJson || '[]');
+    var fonts = Promise.resolve();
+    try {
+      if (document.fonts && document.fonts.load) {
+        fonts = Promise.race([
+          Promise.all(['700 64px "Fraunces"', '700 30px "Source Sans 3"', '400 40px "Source Sans 3"'].map(function (f) { return document.fonts.load(f); })),
+          new Promise(function (ok) { setTimeout(ok, 1500); })
+        ]).catch(function () {});
+      }
+    } catch (e) {}
+    return fonts.then(function () { return drawGlovebox(title, rows, footer); });
+  };
+
+  function wrapText(ctx, text, maxW) {
+    var out = [];
+    String(text || '').split(/\n+/).forEach(function (para) {
+      var words = para.trim().split(/\s+/).filter(Boolean), line = '';
+      words.forEach(function (wd) {
+        while (ctx.measureText(wd).width > maxW && wd.length > 1) {   // a very long word: break it
+          var cut = wd.length - 1;
+          while (cut > 1 && ctx.measureText(wd.slice(0, cut)).width > maxW) cut--;
+          if (line) { out.push(line); line = ''; }
+          out.push(wd.slice(0, cut)); wd = wd.slice(cut);
+        }
+        var test = line ? line + ' ' + wd : wd;
+        if (ctx.measureText(test).width > maxW && line) { out.push(line); line = wd; } else line = test;
+      });
+      if (line) out.push(line);
+    });
+    return out;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  function drawGlovebox(title, rows, footer) {
+    var W = 1080, H = 1920, cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var ctx = cv.getContext('2d');
+    var SANS = '"Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', SERIF = '"Fraunces", Georgia, serif';
+    // wallpaper: cream with soft stripes
+    ctx.fillStyle = '#f2eadc'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(125, 44, 39, 0.035)';
+    for (var sx = 0; sx < W; sx += 72) ctx.fillRect(sx, 0, 30, H);
+    // the card (top ~470 px left clear for the lock-screen clock, bottom for the phone's buttons)
+    var cx = 64, cy = 470, cw = W - 128, ch = 1300, pad = 56;
+    ctx.save(); ctx.shadowColor = 'rgba(60, 35, 20, 0.18)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
+    roundRect(ctx, cx, cy, cw, ch, 36); ctx.fillStyle = '#fcf8f0'; ctx.fill(); ctx.restore();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#dfd1bc'; roundRect(ctx, cx, cy, cw, ch, 36); ctx.stroke();
+    // oxblood leather header with brass stitching
+    var hh = 150;
+    ctx.save(); roundRect(ctx, cx, cy, cw, ch, 36); ctx.clip();
+    ctx.fillStyle = '#7d2c27'; ctx.fillRect(cx, cy, cw, hh); ctx.restore();
+    ctx.save(); ctx.setLineDash([14, 10]); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(217, 173, 92, 0.85)';
+    roundRect(ctx, cx + 14, cy + 14, cw - 28, hh - 14, 24); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = '#fcf3e4'; ctx.textBaseline = 'middle'; ctx.font = '700 64px ' + SERIF;
+    ctx.fillText(title || 'My safety plan', cx + pad, cy + hh / 2 + 6);
+    // rows: shrink the type until everything fits
+    var top = cy + hh + 44, bottom = cy + ch - 40, maxW = cw - 2 * pad, k = 1, layout = [], total = 0;
+    for (; k >= 0.5; k -= 0.05) {
+      layout = []; total = 0;
+      var lf = Math.round(30 * k), tf = Math.round(42 * k), lh = Math.round(tf * 1.28), gap = Math.round(34 * k);
+      rows.forEach(function (r) {
+        ctx.font = '700 ' + lf + 'px ' + SANS;
+        ctx.font = '400 ' + tf + 'px ' + SANS;
+        var lines = wrapText(ctx, r[1], maxW);
+        layout.push({ label: String(r[0] || '').toUpperCase(), lines: lines });
+        total += lf + 12 + lines.length * lh + gap;
+      });
+      if (total <= bottom - top) break;
+    }
+    k = Math.max(k, 0.5);
+    var LF = Math.round(30 * k), TF = Math.round(42 * k), LH = Math.round(TF * 1.28), GAP = Math.round(34 * k);
+    var y = top;
+    ctx.textBaseline = 'top';
+    for (var i = 0; i < layout.length && y < bottom; i++) {
+      var it = layout[i];
+      ctx.fillStyle = '#7d2c27'; ctx.font = '700 ' + LF + 'px ' + SANS;
+      ctx.fillText(it.label, cx + pad, y); y += LF + 12;
+      ctx.fillStyle = '#2a1d17'; ctx.font = '400 ' + TF + 'px ' + SANS;
+      for (var j = 0; j < it.lines.length; j++) {
+        if (y + LH > bottom) { ctx.fillText('…', cx + pad, y); y = bottom; break; }
+        ctx.fillText(it.lines[j], cx + pad, y); y += LH;
+      }
+      y += GAP;
+    }
+    // footer: the emergency line, always visible
+    var fy = cy + ch + 34;
+    roundRect(ctx, cx, fy, cw, 108, 54); ctx.fillStyle = '#b3261e'; ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var big = footer[0] || 'In danger? Call your local emergency number';
+    var bs = 40; ctx.font = '700 ' + bs + 'px ' + SANS;
+    while (ctx.measureText(big).width > cw - 60 && bs > 26) { bs -= 2; ctx.font = '700 ' + bs + 'px ' + SANS; }
+    ctx.fillText(big, W / 2, fy + 54);
+    ctx.fillStyle = '#5a3a26'; ctx.font = '600 34px ' + SANS;
+    ctx.fillText(footer[1] || 'findahelpline.com · free helplines in over 130 countries', W / 2, fy + 108 + 44);
+    ctx.textAlign = 'start';
+    return new Promise(function (ok) {
+      function save(blob) {
+        if (!blob) { ok(false); return; }
+        var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'glovebox-card.png';
+        document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+        ok(true);
+      }
+      try { cv.toBlob(save, 'image/png'); } catch (e) { ok(false); }
+    });
+  }
+
   BM.download = function (name, text, type) {
     var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'text/plain' }));
     a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);

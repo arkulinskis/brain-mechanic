@@ -26,6 +26,7 @@ PAGES = {
     "toolbox": (None, "Toolbox"),
     "help": (None, "Find a mechanic"),
     "workorder": (None, "Work order"),
+    "waiting": (None, "The waiting room: while you wait for care"),
     "profile": ("user", "Your profile"),
     "admin": ("admin", "Admin"),
 }
@@ -92,6 +93,9 @@ def _form(name, args):
     if name == "workorder":
         from .Pages.Workorder import Workorder
         return Workorder
+    if name == "waiting":
+        from .Pages.Waiting import Waiting
+        return Waiting
     if name == "profile":
         from .Pages.Profile import Profile
         return Profile

@@ -8,6 +8,9 @@
       <section class="dg-groups" anvil:name="recent_sec"><h2>On this device</h2>
         <anvil-component type="Label" name="recent_text" prop:role='["dg-p"]'></anvil-component>
         <anvil-component type="RepeatingPanel" name="recent_panel" prop:item_template="Brain_Mechanic.Items.Recent" prop:role='["dg-recent"]'></anvil-component>
+        <div class="dg-recheck" anvil:name="recheck_box"><h3><i class="ic ic-refresh"></i>Your re-checks</h3>
+          <anvil-component type="RepeatingPanel" name="recheck_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["bm-links"]'></anvil-component>
+          <p class="fine-print">Mood and anxiety checks ask about the last two weeks, so every 14 days is enough; others monthly. A change in score isn’t a diagnosis.</p></div>
         <p class="dg-wo"><a class="ui-btn sm brass" href="#workorder"><i class="ic ic-clipboard"></i>Make a work order</a></p>
       </section>
       <section class="dg-groups"><h2>Popular in the waiting room</h2><p>The checks people run most this month (anonymous counts).</p>

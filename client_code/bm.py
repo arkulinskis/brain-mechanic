@@ -8,9 +8,14 @@
     bm.rank_lights(on)         warning-light ids -> ranked [{id, hits, of}]
     bm.local_results() ...     check results kept in this browser (same key as the JavaScript version)
     bm.install_host()          lets the JavaScript widgets call the server, show toasts and the account dialog
+    bm.merge_results(...)      results from this browser + the logbook, same run never twice; bm.history(scan_id, extra)
+    bm.mileage(rows)           first / previous / latest of one check + when it's due again (Mileage log)
+    bm.wait_route()            BM.WAIT: the waiting-room route (#waiting)
+    bm.glovebox(rows)          the safety plan as a 1080x1920 lock-screen PNG, drawn and downloaded in this browser
 Kinds: "conditions", "patterns", "tools", "scans". JSON crosses the bridge, so Python always gets real dicts.
 """
 import json
+import math
 
 import anvil
 import anvil.server
@@ -62,6 +67,12 @@ def adhd():
     if "adhd" not in _c:
         _c["adhd"] = json.loads(_engine().adhd())
     return _c["adhd"]
+
+
+def wait_route():
+    if "wait" not in _c:
+        _c["wait"] = json.loads(_engine().wait())
+    return _c["wait"]
 
 
 def search(q):
@@ -209,6 +220,133 @@ def fmt_date(iso):
         return ""
     y, mo, d = str(iso)[:10].split("-")
     return "%d %s %s" % (int(d), state.MONTHS[int(mo) - 1], y)
+
+
+# ---------------------------------------------------------------- Mileage log: the same check over time
+def _ms(iso):
+    try:
+        t = float(window.Date.parse(str(iso or "")))
+    except Exception:
+        return None
+    return None if t != t else t  # NaN = not a date
+
+
+def merge_results(*lists):
+    """Check results from several places (this browser, the logbook), oldest first, each run once: the same check
+    within 2 seconds is the same run (a result saved to the logbook is also kept in the browser). Each row gets _t (ms)."""
+    out = []
+    for rows in lists:
+        for r in rows or []:
+            if not isinstance(r, dict) or not r.get("scan_id"):
+                continue
+            t = _ms(r.get("taken"))
+            if t is None or r.get("score") is None:
+                continue
+            if any(o["scan_id"] == r["scan_id"] and abs(o["_t"] - t) < 2000 for o in out):
+                continue
+            row = dict(r)
+            row["_t"] = t
+            out.append(row)
+    out.sort(key=lambda row: row["_t"])
+    return out
+
+
+def by_scan(rows):
+    """{scan_id: [results oldest first]} from merge_results rows."""
+    out = {}
+    for r in rows:
+        out.setdefault(r["scan_id"], []).append(r)
+    return out
+
+
+def history(scan_id, extra=None):
+    return [r for r in merge_results(local_results(), extra) if r["scan_id"] == scan_id]
+
+
+def recheck_days(scan_id):
+    """Days between runs (bm-data.js `recheck`): 14 for the two-week screeners, 0 = never (childhood), else 30."""
+    v = (by_id("scans").get(scan_id) or {}).get("recheck")
+    return 30 if v is None else int(v)
+
+
+def score_text(r):
+    return ("%s %s" % (_num(r.get("score")), r.get("label") or "")).strip()
+
+
+def _num(v):
+    try:
+        f = float(v)
+    except Exception:
+        return str(v)
+    return str(int(f)) if f == int(f) else str(round(f, 1))
+
+
+def mileage(rows):
+    """Summary of one check's results (oldest first): first, prev, latest, count, due (bool), due_in (days),
+    next_date (ISO), days (re-check rhythm), points (for Components.Spark), change (latest minus previous)."""
+    if not rows:
+        return None
+    last, first = rows[-1], rows[0]
+    prev = rows[-2] if len(rows) > 1 else None
+    days = recheck_days(last["scan_id"])
+    age = (float(window.Date.now()) - last["_t"]) / 864e5
+    due = days > 0 and age >= days
+    due_in = int(math.ceil(days - age)) if days > 0 and not due else 0
+    next_date = str(window.eval("new Date(%d).toISOString()" % int(last["_t"] + days * 864e5))) if days > 0 else ""
+    change = None
+    if prev is not None:
+        try:
+            change = float(last.get("score")) - float(prev.get("score"))
+        except Exception:
+            change = None
+    pts = [{"v": r.get("score"), "max": r.get("max") or 0, "date": fmt_date(r.get("taken"))} for r in rows[-10:]]
+    return {"first": first, "prev": prev, "last": last, "count": len(rows), "due": due, "due_in": due_in,
+            "next_date": next_date, "days": days, "points": pts, "change": change}
+
+
+def due_text(m):
+    """'Re-check due', 'Re-check in 5 days (1 Dec)' or '' (a check about the past)."""
+    if not m or m["days"] <= 0:
+        return ""
+    if m["due"]:
+        return "Re-check due"
+    return "Re-check in %s (%s)" % (state.plural(m["due_in"], "day"), fmt_date(m["next_date"]))
+
+
+def change_text(m):
+    """'Last time (3 Nov): 14 Moderate → today 9 Mild'."""
+    if not m or not m["prev"]:
+        return ""
+    last, prev = m["last"], m["prev"]
+    when = "today" if str(last.get("taken") or "")[:10] == str(window.eval("new Date().toISOString()"))[:10] else fmt_date(last.get("taken"))
+    return "Last time (%s): %s → %s %s" % (fmt_date(prev.get("taken")), score_text(prev), when, score_text(last))
+
+
+def spark_label(scan_name, m):
+    pts = m["points"] if m else []
+    return "%s, %s: %s" % (scan_name, state.plural(len(pts), "result"), ", ".join("%s on %s" % (_num(p["v"]), p["date"]) for p in pts))
+
+
+# ---------------------------------------------------------------- the Glovebox card
+def glovebox(rows, title="My safety plan"):
+    """rows = [[label, text], ...] (filled-in safety-plan boxes). Draws the lock-screen picture and downloads it.
+    Nothing leaves the browser. Returns True when the download started."""
+    footer = ["In danger? Call your local emergency number", "findahelpline.com · free helplines in over 130 countries"]
+    try:
+        return bool(window.BM.gloveboxCard(title, json.dumps(rows), json.dumps(footer)))
+    except Exception:
+        return False
+
+
+def safety_rows(data):
+    """[[label, text]] from saved or typed safety-plan values {field: text}, in the worksheet's order."""
+    fields = (one("tools", "safety_plan") or {}).get("fields") or []
+    out = []
+    for f in fields:
+        v = str(data.get(f[0]) or "").strip()
+        if v:
+            out.append([f[1], v])
+    return out
 
 
 # ---------------------------------------------------------------- the account pitch, plan button, crisis dialog

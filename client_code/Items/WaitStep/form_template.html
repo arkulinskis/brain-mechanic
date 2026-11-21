@@ -1,0 +1,15 @@
+<div class="wr-step">
+  <span class="wr-tick" anvil:name="tick" aria-hidden="true"><i class="ic ic-check"></i></span>
+  <div class="wr-body">
+    <div class="wr-top">
+      <anvil-component type="Label" name="num" prop:role='["wr-num"]' bind:text="self.item['n']"></anvil-component>
+      <anvil-component type="Label" name="title" prop:role='["strong"]' bind:text="self.item['title']"></anvil-component>
+      <anvil-component type="Label" name="status" prop:role='["bm-st"]'></anvil-component>
+    </div>
+    <anvil-component type="Label" name="line" prop:role='["wr-line"]' bind:text="self.item['line']"></anvil-component>
+  </div>
+  <div class="wr-act">
+    <a class="ui-btn sm" anvil:name="go_link" href="#waiting"><anvil-component type="Label" name="go_text" prop:role='["inline"]'></anvil-component><i class="ic ic-arrow"></i></a>
+    <span anvil:name="brake_wrap"><button type="button" class="bm-brake wr-brake" anvil:on-dom:click="self.brake_click"><i class="ic ic-brake"></i>Open the brake</button></span>
+  </div>
+</div>

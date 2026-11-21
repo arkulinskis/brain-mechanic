@@ -91,6 +91,7 @@ class Garage(GarageTemplate):
                                    "sub": "%s · %s of %s" % (bm.fmt_date(s.get("taken")), s.get("score"), s.get("max")),
                                    "host": None if sample else self} for s in b["scans"]]
         self.no_scans.visible = not b["scans"]
+        self._mileage(b["scans"], [] if sample else local)
         plan = []
         for p in b["plan"]:
             kind = KIND_TAG.get(p.get("kind"), "conditions")
@@ -110,6 +111,26 @@ class Garage(GarageTemplate):
                        "fields": [{"b": f[1], "text": str(data[f[0]])} for f in fields if data.get(f[0]) not in (None, "")]})
         self.journal_panel.items = jr
         self.no_journal.visible = not jr
+
+    def _mileage(self, server, local):
+        """Mileage: every check run twice or more (plus single runs that are due again), first -> latest."""
+        scans = bm.by_id("scans")
+        rows = []
+        for sid, runs in bm.by_scan(bm.merge_results(server, local)).items():
+            if sid not in scans:
+                continue
+            m = bm.mileage(runs)
+            if m["count"] < 2 and not m["due"]:
+                continue
+            first, last = m["first"], m["last"]
+            line = ("First %s (%s) → latest %s (%s) · %d readings" % (bm.score_text(first), bm.fmt_date(first.get("taken")),
+                                                                      bm.score_text(last), bm.fmt_date(last.get("taken")), m["count"])
+                    if m["count"] > 1 else "Once so far: %s (%s)" % (bm.score_text(last), bm.fmt_date(last.get("taken"))))
+            rows.append({"scan_id": sid, "title": scans[sid]["n"], "line": line, "due_text": bm.due_text(m), "due": m["due"],
+                         "points": m["points"], "label": bm.spark_label(scans[sid]["n"], m), "_t": last["_t"]})
+        rows.sort(key=lambda row: (0 if row["due"] else 1, -row["_t"]))
+        self.mileage_panel.items = rows
+        self.no_mileage.visible = not rows
 
     # ---- today's reading
     @handle("save_button", "click")

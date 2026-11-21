@@ -1,0 +1,10 @@
+<section class="wr-week">
+  <div class="wr-week-head">
+    <anvil-component type="Label" name="badge" prop:role='["wr-badge"]' bind:text="self.item['badge']"></anvil-component>
+    <div class="wr-week-txt">
+      <anvil-component type="Label" name="title" prop:role='["wr-h"]' bind:text="self.item['title']"></anvil-component>
+      <anvil-component type="Label" name="why" prop:role='["sec-p"]' bind:text="self.item['why']"></anvil-component>
+    </div>
+  </div>
+  <anvil-component type="RepeatingPanel" name="steps_panel" prop:item_template="Brain_Mechanic.Items.WaitStep" prop:role='["wr-steps"]'></anvil-component>
+</section>

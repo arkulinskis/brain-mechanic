@@ -11,19 +11,28 @@ toolbox_item:
 <div class="bm-crisis">
   <h2><i class="ic ic-brake"></i>Emergency brake</h2>
   <p>If you might act on thoughts of suicide or self-harm, or someone is in danger, <b>call your emergency number now</b>: 911 (US, Canada), 999 (UK), 112 (EU), 000 (Australia), 111 (NZ).</p>
+  <details class="bm-myplan" anvil:name="plan_fold">
+    <summary><i class="ic ic-clipboard"></i><anvil-component type="Label" name="plan_cap" prop:role='["inline"]'></anvil-component></summary>
+    <anvil-component type="RepeatingPanel" name="plan_panel" prop:item_template="Brain_Mechanic.Items.Li" prop:role='["bm-myplan-list"]'></anvil-component>
+    <div class="ui-row">
+      <anvil-component type="Button" name="card_button" prop:text="Glovebox card" prop:role='["btn", "btn-sm", "ic-image"]'></anvil-component>
+      <a class="ui-btn sm" href="#toolbox/safety_plan" anvil:on-dom:click="self.link_click"><i class="ic ic-edit"></i>Update my plan</a>
+    </div>
+  </details>
   <div class="bm-urgent">You don’t have to be “bad enough” to call. Crisis lines are free, confidential, and there for exactly this moment.</div>
   <div class="bm-lines">
-    <div class="bm-line"><b>US</b><span>Call or text <a href="tel:988">988</a> (Suicide &amp; Crisis Lifeline) · text HOME to <a href="sms:741741">741741</a></span></div>
-    <div class="bm-line"><b>Canada</b><span>Call or text <a href="tel:988">988</a> · Québec: <a href="tel:18662773553">1-866-APPELLE</a> (277-3553) · young people: Kids Help Phone <a href="tel:18006686868">1-800-668-6868</a></span></div>
-    <div class="bm-line"><b>UK &amp; Ireland</b><span>Samaritans <a href="tel:116123">116 123</a> (free, 24/7) · UK: text SHOUT to <a href="sms:85258">85258</a></span></div>
-    <div class="bm-line"><b>Australia</b><span>Lifeline <a href="tel:131114">13 11 14</a></span></div>
-    <div class="bm-line"><b>New Zealand</b><span>Call or text <a href="tel:1737">1737</a></span></div>
-    <div class="bm-line"><b>France</b><span><a href="tel:3114">3114</a> (numéro national de prévention du suicide)</span></div>
-    <div class="bm-line"><b>Anywhere</b><span><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free helplines in over 130 countries</span></div>
+    <div class="bm-line" data-region="us"><b>US</b><span>Call or text <a href="tel:988">988</a> (Suicide &amp; Crisis Lifeline) · text HOME to <a href="sms:741741">741741</a></span></div>
+    <div class="bm-line" data-region="ca"><b>Canada</b><span>Call or text <a href="tel:988">988</a> · Québec: <a href="tel:18662773553">1-866-APPELLE</a> (277-3553) · young people: Kids Help Phone <a href="tel:18006686868">1-800-668-6868</a></span></div>
+    <div class="bm-line" data-region="uk"><b>UK &amp; Ireland</b><span>Samaritans <a href="tel:116123">116 123</a> (free, 24/7) · UK: text SHOUT to <a href="sms:85258">85258</a></span></div>
+    <div class="bm-line" data-region="au"><b>Australia</b><span>Lifeline <a href="tel:131114">13 11 14</a></span></div>
+    <div class="bm-line" data-region="nz"><b>New Zealand</b><span>Call or text <a href="tel:1737">1737</a></span></div>
+    <div class="bm-line" data-region="fr"><b>France</b><span><a href="tel:3114">3114</a> (numéro national de prévention du suicide)</span></div>
+    <div class="bm-line" data-region="any"><b>Anywhere</b><span><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> lists free helplines in over 130 countries</span></div>
   </div>
   <p class="small muted">Living with abuse? US <a href="tel:18007997233">1-800-799-7233</a> · UK <a href="tel:08082000247">0808 2000 247</a> · Canada <a href="https://sheltersafe.ca" target="_blank" rel="noopener">sheltersafe.ca</a></p>
   <div class="ui-row">
     <a class="ui-btn" href="#toolbox/safety_plan" anvil:on-dom:click="self.link_click"><i class="ic ic-clipboard"></i>Make a safety plan</a>
     <a class="ui-btn" href="#toolbox/breath_sigh" anvil:on-dom:click="self.link_click"><i class="ic ic-wind"></i>Breathe with me</a>
   </div>
+  <anvil-component type="Timer" name="plan_timer" prop:interval="0"></anvil-component>
 </div>

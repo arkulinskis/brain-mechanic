@@ -134,6 +134,8 @@
     await open('#adhd/myths', /Garage myths/);
     await open('#help', /Who’s who/);
     await open('#workorder', /Notes for my appointment/);
+    await open('#waiting', /four weeks while you wait/);
+    await open('#toolbox/safety_plan', /Glovebox card/);
     await open('#auth', /Sign in/);
     await open('#auth/signup', /Create account/);
 
@@ -148,8 +150,9 @@
     await open('#manual/adhd', /Warning lights/);
     button(/Add to my repair plan/).click();
     await until(() => button(/In your plan/), 'added to the plan', 20000);
-    await open('#garage', /Repair plan/);
+    await open('#garage', /Mileage/);
     if (!qa('.gr-row').length) bad.push('#garage: the plan item is missing');
+    await open('#waiting', /Add route to my repair plan/);
     await open('#workorder', /Notes for my appointment/);
     await open('#profile', /Your name|profile/);
     await signOut();

@@ -104,7 +104,11 @@ class Workorder(WorkorderTemplate):
         rows = []
         for r in chosen:
             s = scans.get(r["scan_id"]) or {}
-            rows.append({"check": s.get("n", r["scan_id"]), "note": "pattern check, not validated" if s.get("kind") == "pattern" else "",
+            notes = ["pattern check, not validated"] if s.get("kind") == "pattern" else []
+            older = [o for o in self.results if o["scan_id"] == r["scan_id"] and str(o.get("taken") or "") < str(r.get("taken") or "")]
+            if older:  # self.results is newest first: older[0] is the run before this one (Mileage log)
+                notes.append("was %s on %s" % (bm.score_text(older[0]), bm.fmt_date(older[0].get("taken"))))
+            rows.append({"check": s.get("n", r["scan_id"]), "note": " · ".join(notes),
                          "score": "%s / %s" % (r.get("score"), r.get("max")), "label": r.get("label", ""), "date": bm.fmt_date(r.get("taken"))})
         self.s_results.items = ([{"head": True, "check": "Check", "score": "Score", "label": "Result", "date": "Date"}] + rows) if rows else []
         self.s_results_empty.visible = not rows

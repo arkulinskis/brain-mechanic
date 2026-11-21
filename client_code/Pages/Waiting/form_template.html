@@ -1,0 +1,22 @@
+<anvil-form layout="Brain_Mechanic.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap wr-wrap">
+      <div class="ui-page-head"><div><h1>The waiting room: four weeks while you wait for care</h1>
+        <p class="muted">On a waiting list for therapy or an assessment? Waiting is hard, and an empty diary makes it harder. Here’s a simple route: one small step at a time, built from tools already in the shop, ending with a work order for your first appointment.</p></div>
+        <a class="ui-btn primary" href="#workorder"><i class="ic ic-clipboard"></i>Work order</a></div>
+      <div class="bm-see wr-safety"><h3><i class="ic ic-brake"></i>If it gets worse while you wait, don’t wait</h3>
+        <p>Call your local emergency number if you might act on thoughts of suicide or self-harm, or anyone is in danger. Free crisis lines are behind the Emergency brake, any time.</p>
+        <button type="button" class="bm-brake" anvil:on-dom:click="self.brake_click"><i class="ic ic-brake"></i>Open the emergency brake</button></div>
+      <div class="wr-bar">
+        <anvil-component type="Label" name="progress" prop:role='["wr-progress"]'></anvil-component>
+        <anvil-component type="Button" name="plan_button" prop:text="Add route to my repair plan" prop:role='["btn", "btn-sm", "ic-plus"]'></anvil-component>
+      </div>
+      <anvil-component type="RepeatingPanel" name="weeks_panel" prop:item_template="Brain_Mechanic.Items.WaitWeek" prop:role='["wr-weeks"]'></anvil-component>
+      <section class="wr-src"><h2>Where this comes from</h2>
+        <p class="muted small">The route follows advice from these guides for people waiting for care. Every tool has its own evidence on its page.</p>
+        <anvil-component type="RepeatingPanel" name="sources_panel" prop:item_template="Brain_Mechanic.Items.Chip" prop:role='["bm-links"]'></anvil-component></section>
+      <anvil-component type="Brain_Mechanic.Components.Note" name="note"></anvil-component>
+      <anvil-component type="Timer" name="load_timer" prop:interval="0"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

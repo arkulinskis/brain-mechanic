@@ -13,6 +13,7 @@ class Worksheet(WorksheetTemplate):
     def __init__(self, **properties):
         self._tool, self._boxes, self._ready, self.tool = "", [], False, {}
         super().__init__(**properties)
+        self.glovebox_box.visible = False
         self._ready = True
         if self._tool:
             self._build()
@@ -55,6 +56,7 @@ class Worksheet(WorksheetTemplate):
             else:
                 state.set_control_attr(box, "maxlength", 4000 if kind == "area" else 400)
             self._boxes.append((key, label, kind, box))
+        self.glovebox_box.visible = self._tool == "safety_plan"
         me = bool(state.me())
         self.save_button.text = "Save to my logbook" if me else "Save in a logbook"
         self.privacy.text = ("Saved worksheets are private to you, in your Garage." if me else
@@ -82,6 +84,17 @@ class Worksheet(WorksheetTemplate):
         if state.call("journal_add", self._tool, filled) is not None:
             state.toast("Saved to your logbook", "ok")
             self.clear_button_click()
+
+    @handle("glovebox_button", "click")
+    def glovebox_button_click(self, **event_args):
+        rows = bm.safety_rows(self._values())
+        if not rows:
+            state.toast("Fill in at least one box first.", "error")
+            return
+        if bm.glovebox(rows):
+            state.toast("Glovebox card saved to your downloads. Set it as your lock screen or keep it in your photos.", "ok")
+        else:
+            state.toast("This browser couldn’t make the picture. Try another browser, or download the text.", "error")
 
     @handle("download_button", "click")
     def download_button_click(self, **event_args):
