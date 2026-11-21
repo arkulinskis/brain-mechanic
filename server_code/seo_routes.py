@@ -45,7 +45,8 @@ SEO = {
   "30 self-checks, including the PHQ-9, GAD-7, PC-PTSD-5 and AUDIT-C",
   "Factory Settings: 34 upbringing patterns and how to rewire them",
   "41 tools with breathing pacers, timers and saveable worksheets",
-  "A private logbook with daily gauges and a printable work order for a professional"
+  "A private logbook with daily gauges and a printable work order for a professional",
+  "The waiting room: a four-week route while you wait for therapy, with re-check reminders (Mileage log) and a lock-screen safety-plan card"
  ],
  "faq": [
   [
@@ -67,7 +68,86 @@ SEO = {
  ],
  "free": True,
  "site": "https://brain-mechanic.anvil.app",
- "updated": "2026-11-16",
+ "guides": [
+  {
+   "path": "/therapy-waitlist",
+   "title": "On a therapy waiting list? What to do while you wait",
+   "description": "A four-week plan for the wait for therapy or an assessment: a safety plan, a baseline mood check, small proven tools and a work order for day one.",
+   "h1": "On a waiting list for therapy? A four-week route for the wait",
+   "intro": [
+    "Waiting weeks or months for therapy or an assessment is common, and it can feel like standing still. A little structure helps: one small job a week, so that by the first appointment you know where you stand and what you want to ask.",
+    "This is the route Brain Mechanic's free Waiting room follows (open it at brain-mechanic.anvil.app/#waiting). Nobody at Brain Mechanic is a doctor: it is self-help and reflection, not treatment, and it never replaces care. If things get worse while you wait, contact the service, your doctor or a crisis line. Don't wait for the appointment."
+   ],
+   "sections": [
+    {
+     "h2": "Before anything else: know where help is",
+     "paras": [
+      "Know what to do if you need help right away: your local emergency number, and a crisis line (988 in the US and Canada, Samaritans 116 123 in the UK and Ireland, or findahelpline.com elsewhere).",
+      "Write a safety plan on a calm day: your warning signs, things that help, people and places that distract you, people you can ask for help, professionals and crisis lines, and how to make your space safer. Keep it where you will see it in a hard moment, for example as your phone's lock screen. Brain Mechanic can turn your plan into a lock-screen picture, drawn on your own device."
+     ]
+    },
+    {
+     "h2": "The four weeks",
+     "paras": [
+      "Each week has two or three small steps. Do them in any order, and skip what doesn't fit."
+     ],
+     "table": {
+      "head": [
+       "When",
+       "Steps",
+       "Why"
+      ],
+      "rows": [
+       [
+        "Week 1",
+        "PHQ-9 mood check, GAD-7 anxiety check, a one-minute daily mood log",
+        "A baseline shows later whether things are moving"
+       ],
+       [
+        "Week 2",
+        "Behavioural activation, worry time, slow breathing",
+        "Coping skills from well-researched therapies (CBT and behavioural activation)"
+       ],
+       [
+        "Week 3",
+        "A steady sleep window, ten minutes of movement, a daily dose of people",
+        "Sleep, exercise and contact with others make the wait easier"
+       ],
+       [
+        "Week 4",
+        "Re-check PHQ-9 and GAD-7, write a one-page summary, pick questions to ask",
+        "You arrive with your scores, your own words and your questions"
+       ]
+      ]
+     },
+     "after": [
+      "PHQ-9 and GAD-7 ask about the last two weeks, so repeating them every two weeks or so is enough. A change in score is not a diagnosis; it is something to show your clinician."
+     ]
+    },
+    {
+     "h2": "Call the service, too",
+     "paras": [
+      "Ask whether there is a cancellation list, and tell the service if things have got worse since you were referred. Ask your doctor what else is available meanwhile, such as guided self-help, groups or peer support."
+     ]
+    }
+   ],
+   "faq": [
+    [
+     "Is this a replacement for therapy?",
+     "No. It is self-help to give the wait some shape. Nobody at Brain Mechanic is a doctor, and only a professional who assesses you can diagnose or treat anything."
+    ],
+    [
+     "What if I feel worse while I wait?",
+     "Don't wait for the appointment: contact the service or your doctor, or a crisis line. In danger, call your local emergency number."
+    ],
+    [
+     "Do I need an account?",
+     "No. The route, the checks and the tools are free and work without an account; results stay in your browser. A free account adds a private logbook."
+    ]
+   ]
+  }
+ ],
+ "updated": "2026-11-20",
  "icon": "icon-512.png",
  "colors": {
   "bg": "#7d2c27",
@@ -119,8 +199,14 @@ def robots_txt(o):
     return "\n".join(lines)
 
 
+def guides():
+    """Optional extra crawlable pages (facts "guides"): plain HTML served by this module, listed in the sitemap."""
+    return SEO.get("guides") or []
+
+
 def sitemap_xml(o):
-    urls = [("/", "1.0"), ("/about", "0.8")] + [(p, "0.6") for p in SEO.get("sitemap_extra", [])]
+    urls = [("/", "1.0"), ("/about", "0.8")] + [(g["path"], "0.7") for g in guides()]
+    urls += [(p, "0.6") for p in SEO.get("sitemap_extra", [])]
     rows = ["<url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>"
             % (html.escape(o), html.escape(p), SEO["updated"], pr) for p, pr in urls]
     return ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -130,6 +216,8 @@ def sitemap_xml(o):
 def llms_txt(o):
     s = SEO
     out = ["# %s" % s["name"], "", "> %s" % s["description"], ""]
+    if s.get("disambiguation"):
+        out += [s["disambiguation"], ""]
     out += [p for para in s.get("about", []) for p in (para, "")]
     if s.get("audience"):
         out += ["Who it's for: %s" % s["audience"], ""]
@@ -141,8 +229,11 @@ def llms_txt(o):
             out += ["### %s" % q, "", a, ""]
     out += ["## Links", "", "- [Open %s](%s/)" % (s["name"], o), "- [About %s](%s/about)" % (s["name"], o),
             "- Made by [Arkvital](https://arkvital.com), Montreal, Canada (arkvital@outlook.com)", ""]
-    if s.get("pages"):  # more pages worth reading: [title, path]
-        out += ["## Pages", ""] + ["- [%s](%s%s)" % (n, o, p) for n, p in s["pages"]] + [""]
+    pages = [[g["title"], g["path"]] for g in guides()] + list(s.get("pages") or [])
+    if pages:  # more pages worth reading: [title, path]
+        out += ["## Pages", ""] + ["- [%s](%s%s)" % (n, o, p) for n, p in pages] + [""]
+    if s.get("same_as"):
+        out += ["## %s elsewhere" % s["name"], ""] + ["- %s" % u for u in s["same_as"]] + [""]
     if s.get("keywords"):
         out += ["Keywords: %s" % ", ".join(s["keywords"]), ""]
     if s.get("updated"):
@@ -171,6 +262,8 @@ def noscript_html(o):
     """
     s, e = SEO, html.escape
     t = ["<noscript><div class=\"seo-noscript\">", "<h1>%s</h1>" % e(s["title"]), "<p>%s</p>" % e(s["description"])]
+    if s.get("disambiguation"):
+        t.append("<p>%s</p>" % e(s["disambiguation"]))
     t += ["<p>%s</p>" % e(p) for p in s.get("about", [])]
     if s.get("audience"):
         t.append("<p>Who it's for: %s</p>" % e(s["audience"]))
@@ -178,6 +271,9 @@ def noscript_html(o):
         t.append("<h2>What it does</h2><ul>%s</ul>" % "".join("<li>%s</li>" % e(f) for f in s["features"]))
     if s.get("faq"):
         t.append("<h2>Questions</h2>" + "".join("<h3>%s</h3><p>%s</p>" % (e(q), e(a)) for q, a in s["faq"]))
+    if guides():
+        t.append("<h2>Guides</h2><ul>%s</ul>" % "".join("<li><a href=\"%s%s\">%s</a></li>" % (e(o), e(g["path"]), e(g["title"]))
+                                                       for g in guides()))
     t.append("<p><a href=\"%s/about\">About %s</a> &middot; <a href=\"%s/llms.txt\">%s for AI assistants</a> &middot; "
              "Made by <a href=\"https://arkvital.com\">Arkvital</a>, Montreal, Canada. "
              "%s needs JavaScript in your browser.</p>" % (e(o), e(s["name"]), e(o), e(s["name"]), e(s["name"])))
@@ -220,11 +316,21 @@ def _ld(o):
         app["offers"] = {"@type": "Offer", "price": "0", "priceCurrency": "CAD"}
     if s.get("audience") and app["@type"] != "ProfessionalService":
         app["audience"] = {"@type": "Audience", "audienceType": s["audience"]}
+    # brand signals (optional facts): other names people use, a "not to be confused with" line, official profiles
+    if s.get("alternate_names"):
+        app["alternateName"] = s["alternate_names"]
+    if s.get("disambiguation"):
+        app["disambiguatingDescription"] = s["disambiguation"]
+    if s.get("same_as"):
+        app["sameAs"] = s["same_as"]
+        app["logo"] = o + "/_/theme/" + s.get("icon", "og-image.png")
     page = {"@type": "AboutPage", "@id": o + "/about#page", "url": o + "/about", "name": "About " + s["name"],
             "about": {"@id": app["@id"]}, "isPartOf": {"@id": site_id}}
-    graph = [app, page, {"@type": "WebSite", "@id": site_id, "url": o + "/", "name": s["name"],
-                         "publisher": {"@id": app["@id"] if app["@type"] == "ProfessionalService"
-                                       else "https://arkvital.com/#org"}},
+    site = {"@type": "WebSite", "@id": site_id, "url": o + "/", "name": s["name"],
+            "publisher": {"@id": app["@id"] if app["@type"] == "ProfessionalService" else "https://arkvital.com/#org"}}
+    if s.get("alternate_names"):  # Google reads WebSite name + alternateName for the site name shown in results
+        site["alternateName"] = s["alternate_names"]
+    graph = [app, page, site,
              {"@type": "Organization", "@id": "https://arkvital.com/#org", "name": "Arkvital", "url": "https://arkvital.com",
               "email": "arkvital@outlook.com", "address": {"@type": "PostalAddress", "addressLocality": "Montreal",
                                                            "addressRegion": "QC", "addressCountry": "CA"}}]
@@ -234,9 +340,31 @@ def _ld(o):
     return json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False).replace("</", "<\\/")
 
 
+_STYLE = """<style>
+:root{--bg:%(bg)s;--ink:%(ink)s;--brand:%(brand)s;--on:%(on)s;--page:#ffffff;--text:#1d1f24;--muted:#5b616e;--line:#e4e6eb}
+@media (prefers-color-scheme: dark){:root{--page:#121317;--text:#eceef2;--muted:#a3a9b6;--line:#2a2d35}}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--bg);color:var(--ink);padding:40px 16px 36px}
+.wrap{max-width:760px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:14px;font-weight:700;font-size:20px}
+.brand img{width:52px;height:52px;border-radius:12px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:22px 0 12px}
+.lead{font-size:19px;margin:0 0 24px;opacity:.9}
+.cta{display:inline-block;background:var(--brand);color:var(--on);padding:12px 22px;border-radius:999px;font-weight:700;text-decoration:none}
+main{padding:24px 16px 48px}h2{margin:36px 0 10px;font-size:24px}h3{margin:22px 0 4px;font-size:18px}
+ul{padding-left:22px}li{margin:6px 0}.who{color:var(--muted)}a{color:inherit}
+footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);font-size:15px}
+</style>"""
+
+
+def _style():
+    c = SEO.get("colors", {})
+    return _STYLE % {"bg": c.get("bg", "#1d1f24"), "ink": c.get("ink", "#ffffff"), "brand": c.get("brand", "#2f6fed"),
+                     "on": c.get("on", "#ffffff")}
+
+
 def about_html(o):
     s, e = SEO, html.escape
-    c = s.get("colors", {})
     paras = "".join("<p>%s</p>" % e(p) for p in s.get("about", []))
     feats = "".join("<li>%s</li>" % e(f) for f in s.get("features", []))
     faq = "".join("<h3>%s</h3><p>%s</p>" % (e(q), e(a)) for q, a in s.get("faq", []))
@@ -254,21 +382,7 @@ def about_html(o):
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="%(o)s/_/theme/%(icon)s">
 <script type="application/ld+json">%(ld)s</script>
-<style>
-:root{--bg:%(bg)s;--ink:%(ink)s;--brand:%(brand)s;--on:%(on)s;--page:#ffffff;--text:#1d1f24;--muted:#5b616e;--line:#e4e6eb}
-@media (prefers-color-scheme: dark){:root{--page:#121317;--text:#eceef2;--muted:#a3a9b6;--line:#2a2d35}}
-*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{background:var(--bg);color:var(--ink);padding:40px 16px 36px}
-.wrap{max-width:760px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:14px;font-weight:700;font-size:20px}
-.brand img{width:52px;height:52px;border-radius:12px}
-h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:22px 0 12px}
-.lead{font-size:19px;margin:0 0 24px;opacity:.9}
-.cta{display:inline-block;background:var(--brand);color:var(--on);padding:12px 22px;border-radius:999px;font-weight:700;text-decoration:none}
-main{padding:24px 16px 48px}h2{margin:36px 0 10px;font-size:24px}h3{margin:22px 0 4px;font-size:18px}
-ul{padding-left:22px}li{margin:6px 0}.who{color:var(--muted)}a{color:inherit}
-footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);font-size:15px}
-</style></head>
+%(style)s</head>
 <body>
 <header><div class="wrap">
 <div class="brand"><img src="%(o)s/_/theme/%(icon)s" alt="" width="52" height="52">%(name)s</div>
@@ -277,20 +391,106 @@ footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);fon
 <a class="cta" href="%(o)s/">Open %(name)s</a>
 </div></header>
 <main><div class="wrap">
-<h2>What %(name)s is</h2>%(paras)s%(who)s
+<h2>What %(name)s is</h2>%(dis)s%(paras)s%(who)s
 %(feat_block)s
 %(faq_block)s
-<p><a class="cta" href="%(o)s/">Open %(name)s</a></p>
+%(guide_block)s<p><a class="cta" href="%(o)s/">Open %(name)s</a></p>
 </div></main>
 <footer><div class="wrap">%(name)s is made by <a href="https://arkvital.com">Arkvital</a> in Montreal, Canada.
 Questions: <a href="mailto:arkvital@outlook.com">arkvital@outlook.com</a>. A short version for AI assistants: <a href="%(o)s/llms.txt">llms.txt</a>.</div></footer>
 </body></html>
 """ % {"lang": e(s.get("lang", "en")), "name": e(s["name"]), "short": e(s.get("tagline", s["title"])),
        "desc": e(s["description"]), "kw": e(", ".join(s.get("keywords", []))), "o": e(o), "icon": e(s.get("icon", "og-image.png")),
-       "ld": _ld(o), "bg": c.get("bg", "#1d1f24"), "ink": c.get("ink", "#ffffff"), "brand": c.get("brand", "#2f6fed"),
-       "on": c.get("on", "#ffffff"), "title": e(s["title"]), "paras": paras, "who": who,
+       "ld": _ld(o), "style": _style(), "title": e(s["title"]), "paras": paras, "who": who,
+       "dis": ("<p>%s</p>" % e(s["disambiguation"])) if s.get("disambiguation") else "",
+       "guide_block": _guide_list(o) + "\n" if guides() else "",
        "feat_block": ("<h2>What you can do</h2><ul>%s</ul>" % feats) if feats else "",
        "faq_block": ("<h2>Questions</h2>%s" % faq) if faq else ""}
+
+
+def _guide_list(o, skip=None):
+    e = html.escape
+    items = "".join('<li><a href="%s%s">%s</a></li>' % (e(o), e(g["path"]), e(g["title"]))
+                    for g in guides() if g["path"] != skip)
+    return "<h2>%s</h2><ul>%s</ul>" % ("More guides" if skip else "Guides", items) if items else ""
+
+
+def _table(t):
+    """{"head": [...], "rows": [[...], ...]} -> an HTML table (first column as row headers)."""
+    e = html.escape
+    head = "".join("<th scope=\"col\">%s</th>" % e(h) for h in t.get("head", []))
+    rows = "".join("<tr><th scope=\"row\">%s</th>%s</tr>" % (e(r[0]), "".join("<td>%s</td>" % e(c) for c in r[1:]))
+                   for r in t.get("rows", []))
+    cap = "<caption>%s</caption>" % e(t["caption"]) if t.get("caption") else ""
+    return "<div class=\"tbl\"><table>%s<thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>" % (cap, head, rows)
+
+
+def guide_ld(o, g):
+    """The site graph plus this page as a WebPage about the app (same @ids, so it is one entity everywhere)."""
+    s = SEO
+    ld = json.loads(_ld(o))
+    ld["@graph"] = [n for n in ld["@graph"] if n["@type"] not in ("AboutPage", "FAQPage")]
+    ld["@graph"].insert(0, {"@type": "WebPage", "@id": o + g["path"] + "#page", "url": o + g["path"], "name": g["title"],
+                            "description": g["description"], "inLanguage": s.get("lang", "en"),
+                            "isPartOf": {"@id": o + "/#site"}, "about": {"@id": o + "/#app"},
+                            "dateModified": s.get("updated")})
+    if g.get("faq"):
+        ld["@graph"].append({"@type": "FAQPage", "@id": o + g["path"] + "#faq", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g["faq"]]})
+    return json.dumps(ld, ensure_ascii=False).replace("</", "<\\/")
+
+
+def guide_html(o, g):
+    """One guide page: facts "guides" entry {path, title, description, h1?, intro: [p], sections: [{h2, paras, table}], faq}."""
+    s, e = SEO, html.escape
+    body = "".join("<p>%s</p>" % e(p) for p in g.get("intro", []))
+    for sec in g.get("sections", []):
+        body += "<h2>%s</h2>" % e(sec["h2"])
+        body += "".join("<p>%s</p>" % e(p) for p in sec.get("paras", []))
+        if sec.get("table"):
+            body += _table(sec["table"])
+        body += "".join("<p>%s</p>" % e(p) for p in sec.get("after", []))
+    if g.get("faq"):
+        body += "<h2>Questions</h2>" + "".join("<h3>%s</h3><p>%s</p>" % (e(q), e(a)) for q, a in g["faq"])
+    about = "<h2>About %s</h2><p>%s</p>" % (e(s["name"]), e(s["description"]))
+    if s.get("disambiguation"):
+        about += "<p>%s</p>" % e(s["disambiguation"])
+    return """<!doctype html>
+<html lang="%(lang)s"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>%(title)s | %(name)s</title>
+<meta name="description" content="%(desc)s">
+<link rel="canonical" href="%(o)s%(path)s">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta property="og:type" content="article"><meta property="og:site_name" content="%(name)s">
+<meta property="og:title" content="%(title)s"><meta property="og:description" content="%(desc)s">
+<meta property="og:url" content="%(o)s%(path)s"><meta property="og:image" content="%(o)s/_/theme/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="%(o)s/_/theme/%(icon)s">
+<script type="application/ld+json">%(ld)s</script>
+%(style)s
+<style>.tbl{overflow-x:auto;margin:14px 0}table{border-collapse:collapse;width:100%%;font-size:16px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}thead th{font-size:14px;color:var(--muted)}
+caption{text-align:left;color:var(--muted);font-size:14px;padding-bottom:6px}nav.crumbs{font-size:15px;margin-bottom:6px;opacity:.85}</style></head>
+<body>
+<header><div class="wrap">
+<div class="brand"><img src="%(o)s/_/theme/%(icon)s" alt="" width="52" height="52">%(name)s</div>
+<h1>%(h1)s</h1>
+<p class="lead">%(desc)s</p>
+<a class="cta" href="%(o)s/">Practise this in %(name)s</a>
+</div></header>
+<main><div class="wrap">
+<nav class="crumbs"><a href="%(o)s/">%(name)s</a> &rsaquo; <a href="%(o)s/about">About</a> &rsaquo; %(title)s</nav>
+%(body)s
+%(about)s
+%(more)s
+<p><a class="cta" href="%(o)s/">Open %(name)s</a></p>
+</div></main>
+<footer><div class="wrap">%(name)s is made by <a href="https://arkvital.com">Arkvital</a> in Montreal, Canada.
+Questions: <a href="mailto:arkvital@outlook.com">arkvital@outlook.com</a>. A short version for AI assistants: <a href="%(o)s/llms.txt">llms.txt</a>.</div></footer>
+</body></html>
+""" % {"lang": e(s.get("lang", "en")), "name": e(s["name"]), "title": e(g["title"]), "h1": e(g.get("h1", g["title"])),
+       "desc": e(g["description"]), "o": e(o), "path": e(g["path"]), "icon": e(s.get("icon", "og-image.png")),
+       "ld": guide_ld(o, g), "style": _style(), "body": body, "about": about, "more": _guide_list(o, g["path"])}
 
 
 def _file(text, ctype):
@@ -323,6 +523,15 @@ if ROUTE:  # the Python 3.10+ server runtimes have it; older ones serve nothing 
     @ROUTE("/about")
     def seo_about(**params):
         return _file(about_html(origin()), "text/html; charset=utf-8")
+
+    def _guide_route(i, g):
+        def seo_guide(**params):
+            return _file(guide_html(origin(), g), "text/html; charset=utf-8")
+        seo_guide.__name__ = "seo_guide_%d" % i
+        return ROUTE(g["path"])(seo_guide)
+
+    for _i, _g in enumerate(guides()):
+        _guide_route(_i, _g)
 
     def _verify_route(i, path, ctype, body):
         def seo_verify(**params):
